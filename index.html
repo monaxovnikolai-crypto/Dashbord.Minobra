@@ -2,832 +2,691 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>РНГП 713/30 — Школы и сады + диалог с ИИ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд — Образовательная инфраструктура Московской области</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: #eef2f5;
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: #1e293b;
+            padding: 24px 20px;
+            overflow-x: hidden;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1e3c2c 0%, #2c3e50 100%);
-            color: white;
-            padding: 18px 24px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 1.6rem;
-            font-weight: 600;
-        }
-
-        .header p {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 6px;
-        }
-
-        .two-columns {
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        h1 { font-size: 28px; margin-bottom: 8px; color: #0f2b3d; }
+        .sub { color: #4a627a; margin-bottom: 32px; border-left: 4px solid #2c7da0; padding-left: 16px; }
+        
+        .main-tabs {
             display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-            padding: 24px;
+            gap: 12px;
+            margin-bottom: 28px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 8px;
         }
-
-        .left-panel {
-            flex: 2;
-            min-width: 320px;
-        }
-
-        .right-panel {
-            flex: 1.2;
-            min-width: 280px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e4e7ec;
-        }
-
-        .card-title {
-            font-weight: 600;
+        .main-tab-btn {
+            background: none;
+            border: none;
             font-size: 1rem;
-            margin-bottom: 16px;
-            color: #1f2f3a;
-            border-left: 4px solid #2c7a4d;
-            padding-left: 12px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #475569;
+            transition: 0.2s;
         }
-
-        .split-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .split-col {
-            flex: 1;
-            min-width: 200px;
-            background: #fefefe;
-            border-radius: 20px;
-            padding: 16px;
-            border: 1px solid #ecf3fa;
-        }
-
-        .input-group {
-            margin-bottom: 16px;
-        }
-
-        .input-group label {
-            font-size: 0.75rem;
-            font-weight: 500;
-            display: block;
-            margin-bottom: 6px;
-            color: #2c3e50;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            border: 1px solid #cfdde6;
-            border-radius: 14px;
+        .main-tab-btn.active {
             background: white;
+            color: #0f3b5f;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-bottom: 3px solid #2c7da0;
         }
-
-        .toggle-block {
+        .main-tab-content { display: none; }
+        .main-tab-content.active { display: block; }
+        
+        .stats-row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 40px; }
+        .stat-card {
+            flex: 1; background: white; border-radius: 24px; padding: 20px; text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .stat-card .big-number { font-size: 42px; font-weight: 800; color: #1e4663; }
+        .stat-card .label { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #5f7f9e; margin-top: 8px; }
+        .stat-card .detail { font-size: 13px; color: #3b5c7a; margin-top: 6px; }
+        
+        .zones-row { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 40px; }
+        .zone-card {
+            flex: 1; min-width: 280px; border-radius: 28px; padding: 24px;
+            transition: all 0.2s;
+        }
+        .zone-card.green { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 6px solid #2b9348; }
+        .zone-card.yellow { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-left: 6px solid #e9c46a; }
+        .zone-card.red { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 6px solid #e76f51; }
+        .zone-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+        .zone-subtitle { font-size: 13px; opacity: 0.7; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        
+        .total-stats { margin-bottom: 20px; cursor: pointer; transition: 0.2s; border-radius: 16px; padding: 8px; margin: -8px -8px 12px -8px; }
+        .total-stats:hover { background: rgba(0,0,0,0.05); transform: scale(1.01); }
+        .total-number { font-size: 36px; font-weight: 800; }
+        .total-label { font-size: 14px; margin-left: 8px; }
+        
+        .split-stats { display: flex; gap: 20px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.08); }
+        .split-item { flex: 1; cursor: pointer; transition: 0.2s; border-radius: 12px; padding: 6px; }
+        .split-item:hover { background: rgba(0,0,0,0.05); transform: translateY(-2px); }
+        .split-item .label { font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.7; margin-bottom: 6px; }
+        .split-item .number { font-size: 20px; font-weight: 700; }
+        .split-item .seats { font-size: 12px; opacity: 0.7; }
+        
+        .years-tabs { display: flex; gap: 12px; margin: 32px 0 20px 0; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; }
+        .year-tab-btn { background: none; border: none; font-size: 1rem; font-weight: 600; padding: 8px 24px; border-radius: 40px; cursor: pointer; color: #475569; }
+        .year-tab-btn.active { background: white; color: #0f3b5f; border-bottom: 3px solid #2c7da0; }
+        .year-content { display: none; }
+        .year-content.active { display: block; }
+        
+        .year-table-wrapper { background: white; border-radius: 24px; overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e9edf2; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { text-align: left; padding: 16px 12px; background-color: #f8fafc; font-weight: 600; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 14px 12px; border-bottom: 1px solid #ecf3fa; }
+        .clickable-cell { cursor: pointer; transition: 0.2s; border-radius: 8px; display: inline-block; padding: 4px 8px; margin: -4px -8px; }
+        .clickable-cell:hover { background: rgba(0,0,0,0.05); transform: scale(1.02); }
+        .group-cell { line-height: 1.5; }
+        .group-cell .sub { font-size: 0.8rem; color: #5b6e8c; }
+        .clean-number { font-weight: 600; }
+        
+        .search-bar {
+            background: white;
+            border-radius: 48px;
+            padding: 8px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee4ec;
             display: flex;
             align-items: center;
             gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 12px;
         }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 46px;
-            height: 24px;
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 0;
+            font-size: 0.9rem;
+            outline: none;
+            background: transparent;
         }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        
+        .detail-panel {
+            background: white;
+            border-radius: 28px;
+            margin-top: 32px;
+            border: 1px solid #cbdff2;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
-
-        .slider {
-            position: absolute;
+        .panel-header { background: #1e4663; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .close-panel-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; width: 36px; height: 36px; border-radius: 40px; cursor: pointer; }
+        .panel-content { padding: 20px 24px; max-height: 500px; overflow-y: auto; }
+        
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100%;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+            border-radius: 20px 0 0 20px;
+        }
+        .side-panel.open { right: 0; }
+        .side-panel-header {
+            background: #1e4663;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+        }
+        .side-panel-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 40px;
             cursor: pointer;
+        }
+        .side-panel-content { padding: 24px; }
+        .detail-table { width: 100%; border-collapse: collapse; }
+        .detail-table tr { border-bottom: 1px solid #e2e8f0; }
+        .detail-table td { padding: 14px 8px; vertical-align: top; }
+        .detail-table td:first-child { font-weight: 600; width: 40%; color: #1e4663; }
+        .detail-table td:last-child { color: #334155; }
+        .overlay {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: 0.2s;
-            border-radius: 30px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: 0.2s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: #2c7a4d;
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(22px);
-        }
-
-        .toggle-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .number-field {
-            width: 100px;
-            padding: 6px 8px;
-            font-size: 0.8rem;
-            border: 1px solid #cfdde6;
-            border-radius: 12px;
-        }
-
-        .status-badge {
-            background: #f4f9fe;
-            padding: 10px 12px;
-            border-radius: 14px;
-            font-size: 0.75rem;
-            margin-top: 14px;
-            color: #1e4663;
-            text-align: center;
-        }
-
-        .normative-card {
-            background: #f5f9ff;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #dce5f0;
-        }
-
-        .normative-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1f4f2d;
-            margin: 8px 0;
-        }
-
-        .solution-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 18px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .ai-chat {
-            background: white;
-            border-radius: 24px;
-            border: 3px solid #3b82f6;
-            animation: borderGlow 2s infinite ease-in-out;
-            display: flex;
-            flex-direction: column;
-            height: 500px;
-        }
-
-        @keyframes borderGlow {
-            0% { border-color: #3b82f6; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.2); }
-            50% { border-color: #a855f7; box-shadow: 0 0 0 6px rgba(168, 85, 247, 0.1); }
-            100% { border-color: #3b82f6; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.2); }
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #fafcff;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .message {
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 18px;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        .user-message {
-            background: #3b82f6;
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .ai-message {
-            background: #eef2ff;
-            color: #1e293b;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-            padding: 16px;
-            border-top: 1px solid #e2e8f0;
-            background: white;
-            border-radius: 0 0 20px 20px;
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #cfdde6;
-            border-radius: 40px;
-            font-size: 0.85rem;
-        }
-
-        .chat-input-area button {
-            background: linear-gradient(125deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .loading-text {
-            animation: pulseOpacity 1.2s ease-in-out infinite;
-            opacity: 0.5;
-        }
-
-        @keyframes pulseOpacity {
-            0% { opacity: 0.4; }
-            50% { opacity: 0.9; }
-            100% { opacity: 0.4; }
-        }
-
-        .full-width-btn {
             width: 100%;
-            background: linear-gradient(125deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            padding: 16px 20px;
-            border-radius: 60px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .full-width-btn:hover {
-            transform: scale(1.01);
-            opacity: 0.95;
-        }
-
-        .searchable-select {
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            border: 1px solid #cfdde6;
-            border-radius: 14px;
-        }
-
-        .search-dropdown {
-            position: absolute;
-            background: white;
-            border: 1px solid #cfdde6;
-            border-radius: 14px;
-            max-height: 200px;
-            overflow-y: auto;
-            width: 100%;
-            z-index: 20;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
             display: none;
         }
-
-        .search-dropdown div {
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
+        .overlay.active { display: block; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1100;
+            justify-content: center;
+            align-items: center;
         }
-
-        .search-dropdown div:hover {
-            background: #eef2f5;
-        }
-
-        @media (max-width: 800px) {
-            .two-columns { flex-direction: column; }
-            .split-row { flex-direction: column; }
-            .ai-chat { height: 400px; }
+        .modal-content { background: white; border-radius: 20px; width: 90%; height: 90%; position: relative; overflow: hidden; }
+        .modal-close { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; background: white; width: 40px; height: 40px; border-radius: 40px; text-align: center; line-height: 35px; }
+        iframe { width: 100%; height: 100%; border: none; }
+        
+        .btn-pdf { background: #e76f51; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        
+        .footer { margin-top: 32px; text-align: center; font-size: 12px; color: #6c7f8f; }
+        
+        @media (max-width: 700px) {
+            .side-panel { width: 100%; right: -100%; }
+            .zones-row { flex-direction: column; }
+            .stats-row { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <div class="header">
-        <h1>🏗️ Калькулятор РНГП 713/30</h1>
-        <p>Расчёт потребности в школах и детских садах + диалог с ИИ</p>
+    <h1>Образовательная инфраструктура Московской области</h1>
+   
+    <div class="main-tabs">
+        <button class="main-tab-btn active" data-main-tab="tabAnalytics">Аналитика</button>
+        <button class="main-tab-btn" data-main-tab="tabList">Список объектов</button>
     </div>
 
-    <div class="two-columns">
-        <div class="left-panel">
-            <div class="card">
-                <div class="card-title">📐 Способ расчёта</div>
-                <div class="input-group">
-                    <label>Тип ввода</label>
-                    <select id="calcType">
-                        <option value="area">По площади жилья (м²)</option>
-                        <option value="population">По численности населения (чел)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label id="inputLabel">Площадь жилья (м²)</label>
-                    <input type="number" id="mainValue" placeholder="Введите значение" step="1" value="">
-                    <div id="hintText" style="font-size:0.7rem; color:#5b6e8c; margin-top:5px;"></div>
-                </div>
-            </div>
+    <div id="tabAnalytics" class="main-tab-content active">
+        <div class="stats-row" id="totalStats"></div>
+        <div class="zones-row" id="zonesContainer"></div>
 
-            <div class="card">
-                <div class="card-title">🏙️ Городской округ</div>
-                <div class="searchable-select">
-                    <input type="text" id="citySearch" class="search-input" placeholder="Начните вводить...">
-                    <div id="cityDropdown" class="search-dropdown"></div>
-                </div>
-                <div style="font-size:0.7rem; margin-top:8px; color:#2c7a4d;" id="coeffHint">Коэффициент округа: 1.00 (не выбран)</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">🏫 Школы и детские сады</div>
-                <div class="split-row">
-                    <div class="split-col">
-                        <div style="font-weight: 600; margin-bottom: 14px;">🏫 Школы</div>
-                        <div class="input-group">
-                            <label>Мощность (чел)</label>
-                            <input type="number" id="schoolPlan" placeholder="План" step="1">
-                        </div>
-                        <div class="input-group">
-                            <label>Факт (чел)</label>
-                            <input type="number" id="schoolActual" placeholder="Факт" step="1">
-                        </div>
-                        <div class="toggle-block">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="secondShiftToggle">
-                                <span class="slider"></span>
-                            </label>
-                            <span class="toggle-label">🕐 Вторая смена</span>
-                            <input type="number" id="secondShiftNumber" class="number-field" placeholder="Кол-во чел" step="1" value="0" style="display: none;">
-                        </div>
-                        <div id="schoolStatus" class="status-badge">⚪ Нет данных</div>
-                    </div>
-
-                    <div class="split-col">
-                        <div style="font-weight: 600; margin-bottom: 14px;">🏫 Детские сады</div>
-                        <div class="input-group">
-                            <label>Мощность (чел)</label>
-                            <input type="number" id="kindergartenPlan" placeholder="План" step="1">
-                        </div>
-                        <div class="input-group">
-                            <label>Факт (чел)</label>
-                            <input type="number" id="kindergartenActual" placeholder="Факт" step="1">
-                        </div>
-                        <div class="toggle-block">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="queueToggle">
-                                <span class="slider"></span>
-                            </label>
-                            <span class="toggle-label">👶 Очередность 3–7 лет</span>
-                            <input type="number" id="queueNumber" class="number-field" placeholder="Детей в очереди" step="1" value="0" style="display: none;">
-                        </div>
-                        <div id="kindergartenStatus" class="status-badge">⚪ Нет данных</div>
-                    </div>
-                </div>
-            </div>
+        <div class="years-tabs">
+            <button class="year-tab-btn active" data-year-tab="tabOpen">Год открытия</button>
+            <button class="year-tab-btn" data-year-tab="tabInput">Год ввода</button>
         </div>
+        <div id="tabOpen" class="year-content active"><div class="year-table-wrapper"><table id="openYearTable"><thead><tr><th>Год</th><th>Школы</th><th>Детские сады</th><th>Всего</th></tr></thead><tbody id="openYearBody"><tr><td colspan="4">Загрузка...</td></tr></tbody></table></div></div>
+        <div id="tabInput" class="year-content"><div class="year-table-wrapper"><table id="inputYearTable"><thead><tr><th>Год</th><th>Школы</th><th>Детские сады</th><th>Всего</th></tr></thead><tbody id="inputYearBody"><tr><td colspan="4">Загрузка...</td></tr></tbody></table></div></div>
 
-        <div class="right-panel">
-            <div class="normative-card">
-                <div style="font-weight: 600;">📋 Норматив РНГП 713/30</div>
-                <div>🏫 Школы <span id="schoolRequired" class="normative-value">0</span> мест</div>
-                <div>🏫 Сады <span id="kindergartenRequired" class="normative-value">0</span> мест</div>
-                <div style="font-size:0.7rem;">135 мест/1000 жит · 65 мест/1000 жит<br>× округ (0,85)</div>
-            </div>
-
-            <div class="solution-card">
-                <div style="font-weight: 600; margin-bottom: 12px;">💡 Возможные решения</div>
-                <div id="solutionText" style="font-size: 0.9rem; line-height: 1.4;">
-                    Здесь появится рекомендованное решение.
-                </div>
-            </div>
-
-            <div class="ai-chat">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message ai-message">👋 Здравствуйте! Я ИИ-аналитик по школам и детским садам. Заполните данные слева, затем нажмите кнопку ниже для получения рекомендации.</div>
-                </div>
-                <div class="chat-input-area" id="chatInputArea">
-                    <button id="initialBtn" class="full-width-btn">🤖 Дай рекомендацию по текущим данным</button>
-                </div>
-            </div>
+        <div id="detailPanel" class="detail-panel" style="display: none;">
+            <div class="panel-header"><h3 id="panelTitle">Детализация</h3><button class="close-panel-btn" id="closePanelBtn">×</button></div>
+            <div class="panel-content" id="panelContent"></div>
         </div>
     </div>
+
+    <div id="tabList" class="main-tab-content">
+        <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" id="objectSearchInput" placeholder="Поиск по наименованию, округу, типу...">
+        </div>
+        <div class="year-table-wrapper">
+            <table id="fullObjectsTable">
+                <thead><tr><th>№</th><th>Тип</th><th>Городской округ</th><th>Наименование объекта</th><th>Мощность</th><th>Зона</th><th>Год ввода</th><th>Открытие</th><th>Презентация</th><th>Детали</th></tr></thead>
+                <tbody id="fullObjectsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pdfModal" class="modal"><div class="modal-content"><div class="modal-close" id="modalClose">×</div><iframe id="pdfFrame" src=""></iframe></div></div>
+    <div class="footer">Источник: https://docs.google.com/spreadsheets/d/1HOU8WHNM2kgVsMr17Hr-d174Ias-ziwn-fOaqSdMIAo/edit?gid=0#gid=0 </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+        <h3 id="sidePanelTitle">Карточка объекта</h3>
+        <button class="side-panel-close" id="sidePanelClose">×</button>
+    </div>
+    <div class="side-panel-content" id="sidePanelContent"></div>
 </div>
 
 <script>
-    // ---------- ГОРОДА ----------
-    const cities = [
-        "Ленинский", "Одинцовский", "Красногорск", "Балашиха", "Мытищи", "Наро-Фоминск", "Химки", "Люберцы", "Щелково", "Домодедово",
-        "Котельники", "Пушкинский", "Чехов", "Раменский", "Истра", "Долгопрудный", "Реутов", "Подольск", "Лосино-Петровский", "Зарайск",
-        "Лобня", "Солнечногорск", "Дмитровский", "Ступино", "Богородский", "Клин", "Сергиево-Посадский", "Рузский", "Дубна", "Лыткарино",
-        "Бронницы", "Королев", "Павлово-Посадский", "Воскресенск", "Фрязино", "Жуковский", "Электросталь", "Орехово-Зуево", "Серпухов",
-        "Коломна", "Талдомский", "Можайский", "Луховицы", "Черноголовка", "Волоколамский", "Кашира", "Егорьевск", "Серебряные Пруды",
-        "Шатура", "Шаховская", "Лотошино"
-    ];
-
-    let selectedCity = "";
-    let districtCoeff = 1.0;
-    const SCHOOL_RATE = 0.135;
-    const KINDER_RATE = 0.065;
-
-    // DOM
-    const calcType = document.getElementById('calcType');
-    const mainValue = document.getElementById('mainValue');
-    const hintText = document.getElementById('hintText');
-    const inputLabel = document.getElementById('inputLabel');
-    const schoolPlan = document.getElementById('schoolPlan');
-    const schoolActual = document.getElementById('schoolActual');
-    const secondShiftToggle = document.getElementById('secondShiftToggle');
-    const secondShiftNumber = document.getElementById('secondShiftNumber');
-    const schoolStatus = document.getElementById('schoolStatus');
-    const kinderPlan = document.getElementById('kindergartenPlan');
-    const kinderActual = document.getElementById('kindergartenActual');
-    const queueToggle = document.getElementById('queueToggle');
-    const queueNumber = document.getElementById('queueNumber');
-    const kinderStatus = document.getElementById('kindergartenStatus');
-    const schoolRequiredSpan = document.getElementById('schoolRequired');
-    const kinderRequiredSpan = document.getElementById('kindergartenRequired');
-    const solutionText = document.getElementById('solutionText');
-    const citySearchInput = document.getElementById('citySearch');
-    const cityDropdown = document.getElementById('cityDropdown');
-    const chatMessages = document.getElementById('chatMessages');
-    const chatInputArea = document.getElementById('chatInputArea');
-    const initialBtn = document.getElementById('initialBtn');
-    const PROXY_URL = 'https://gemini-proxy.monaxovnikolai-31d.workers.dev';
-    let conversationHistory = [];
-
-    // ----- Поиск города -----
-    function renderCities(filter = "") {
-        const filtered = cities.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
-        if (!filtered.length) {
-            cityDropdown.innerHTML = "<div style='padding:8px'>Нет совпадений</div>";
-            cityDropdown.style.display = "block";
-            return;
-        }
-        cityDropdown.innerHTML = filtered.map(c => `<div data-city="${c}">${c}</div>`).join('');
-        cityDropdown.style.display = "block";
-        document.querySelectorAll('[data-city]').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const city = el.getAttribute('data-city');
-                citySearchInput.value = city;
-                selectedCity = city;
-                cityDropdown.style.display = "none";
-                districtCoeff = 0.85;
-                document.getElementById('coeffHint').innerHTML = `Коэффициент округа: ${districtCoeff.toFixed(2)} (применяется)`;
-                recalcAll();
-            });
-        });
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP3m6xKhbU3FbvcZl-pntPYcO7X7PvbTnOjGhS6TgqkqQNYYRYVvTfA8mTdF4gxO5is9b_ZxC-eOw7/pub?output=csv";
+    
+    const COL = {
+        TYPE: 1, CITY: 3, NAME: 4, CAPACITY: 5,
+        DEADLINE: 6, INPUT_YEAR: 7, OPEN_DATE: 8, OPEN_YEAR: 9,
+        COST: 11, NOTE: 15, ZONE: 16,
+        PLAN_LOCAL: 17, FACT_LOCAL: 18, SECOND_SHIFT: 19, PDF: 20
+    };
+    
+    let allObjects = [];
+    
+    function declension(num, one, few, many) {
+        let n = Math.abs(num) % 100;
+        if (n >= 5 && n <= 20) return many;
+        n %= 10;
+        if (n === 1) return one;
+        if (n >= 2 && n <= 4) return few;
+        return many;
     }
-
-    citySearchInput.addEventListener('input', (e) => renderCities(e.target.value));
-    document.addEventListener('click', (e) => {
-        if (!citySearchInput.contains(e.target) && !cityDropdown.contains(e.target)) cityDropdown.style.display = "none";
-    });
-
-    function getPopulation() {
-        let val = parseFloat(mainValue.value) || 0;
-        if (calcType.value === 'area') return Math.floor(val / 28);
-        else return Math.floor(val);
+    
+    function parseYear(value) {
+        if (!value) return null;
+        const num = parseInt(value.toString().trim());
+        if (!isNaN(num) && num >= 2000 && num <= 2100) return num;
+        return null;
     }
-
-    function updateHint() {
-        let val = parseFloat(mainValue.value) || 0;
-        if (calcType.value === 'area') {
-            let pop = Math.floor(val / 28);
-            hintText.innerText = `👥 Соответствует населению: ${pop} чел.`;
-            inputLabel.innerText = 'Площадь жилья (м²)';
-        } else {
-            let area = Math.floor(val * 28);
-            hintText.innerText = `🏘️ Соответствует площади жилья: ${area} м²`;
-            inputLabel.innerText = 'Численность населения (чел)';
-        }
+    
+    function cleanOpenDate(date) {
+        if (!date) return "";
+        return date.toString().replace(/[}?]/g, '').trim();
     }
-
-    function updateSchoolStatus() {
-        let plan = parseFloat(schoolPlan.value) || 0;
-        let fact = parseFloat(schoolActual.value) || 0;
-        let hasSecond = secondShiftToggle.checked;
-        if (plan <= 0) {
-            schoolStatus.innerHTML = "⚪ Нет данных";
-            return;
+    
+    function fixPdfLink(link) {
+        if (!link) return "";
+        if (link.includes("drive.google.com")) {
+            if (link.includes("/view")) return link.replace("/view", "/preview");
+            if (link.includes("/edit")) return link.replace("/edit", "/preview");
         }
-        let percent = (fact / plan) * 100;
-        let deficit = fact - plan;
-        if (hasSecond) {
-            schoolStatus.innerHTML = `⚠️ Дефицит +${Math.abs(deficit)} мест • загрузка ${percent.toFixed(1)}%`;
-        } else {
-            schoolStatus.innerHTML = `✅ Сбалансировано • загрузка ${percent.toFixed(1)}%`;
-        }
+        return link;
     }
-
-    function updateKindergartenStatus() {
-        let plan = parseFloat(kinderPlan.value) || 0;
-        let fact = parseFloat(kinderActual.value) || 0;
-        let hasQueue = queueToggle.checked;
-        if (plan <= 0) {
-            kinderStatus.innerHTML = "⚪ Нет данных";
-            return;
-        }
-        let percent = (fact / plan) * 100;
-        let deficit = fact - plan;
-        if (hasQueue) {
-            kinderStatus.innerHTML = `⚠️ Дефицит +${Math.abs(deficit)} мест • загрузка ${percent.toFixed(1)}% • очередь ${queueNumber.value || 0}`;
-        } else {
-            kinderStatus.innerHTML = `✅ Сбалансировано • загрузка ${percent.toFixed(1)}%`;
-        }
-    }
-
-    function updateSolution() {
-        let hasAnyData = (mainValue.value && parseFloat(mainValue.value) > 0) ||
-                         (schoolPlan.value && parseFloat(schoolPlan.value) > 0) ||
-                         (kinderPlan.value && parseFloat(kinderPlan.value) > 0);
-        if (!hasAnyData && districtCoeff === 1.0 && !secondShiftToggle.checked && !queueToggle.checked) {
-            solutionText.innerHTML = "Здесь появится решение после ввода данных.";
-            return;
-        }
-        let hasSecond = secondShiftToggle.checked;
-        let hasQueue = queueToggle.checked;
-        if (hasSecond || hasQueue) {
-            solutionText.innerHTML = "🏗️ <strong>Строим школу + сад</strong><br>Обеспечиваем полную потребность по нормативу.";
-        } else {
-            solutionText.innerHTML = "📊 <strong>Строим часть + деньги + ЗУ</strong><br>Частичное строительство, остальное финансируем, резервируем землю.";
-        }
-    }
-
-    function recalcAll() {
-        const population = getPopulation();
-        updateHint();
-        let schoolNeed = population * SCHOOL_RATE * districtCoeff;
-        let kinderNeed = population * KINDER_RATE * districtCoeff;
-        schoolRequiredSpan.innerText = Math.round(schoolNeed);
-        kinderRequiredSpan.innerText = Math.round(kinderNeed);
-        updateSchoolStatus();
-        updateKindergartenStatus();
-        updateSolution();
-    }
-
-    // ---------- ДИАЛОГОВЫЙ РЕЖИМ ----------
-    function initChat() {
-        chatInputArea.innerHTML = `
-            <input type="text" id="chatInput" placeholder="Напишите сообщение..." autocomplete="off">
-            <button id="sendBtn">➤ Отправить</button>
-        `;
-        const chatInput = document.getElementById('chatInput');
-        const sendBtn = document.getElementById('sendBtn');
-        
-        sendBtn.addEventListener('click', () => {
-            const msg = chatInput.value.trim();
-            if (!msg) return;
-            sendToAI(msg);
-        });
-        
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendBtn.click();
-            }
-        });
-    }
-
-    async function sendToAI(userMessage, isFirstRecommendation = false) {
-        if (!isFirstRecommendation) {
-            addMessage(userMessage, 'user');
-        }
-        
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'message ai-message';
-        const loadingSpan = document.createElement('span');
-        loadingSpan.className = 'loading-text';
-        loadingSpan.innerText = 'Анализирую...';
-        typingDiv.appendChild(loadingSpan);
-        chatMessages.appendChild(typingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        const population = getPopulation();
-        const schoolPlanVal = parseFloat(schoolPlan.value) || 0;
-        const schoolActualVal = parseFloat(schoolActual.value) || 0;
-        const kinderPlanVal = parseFloat(kinderPlan.value) || 0;
-        const kinderActualVal = parseFloat(kinderActual.value) || 0;
-        const hasSecond = secondShiftToggle.checked;
-        const secondShiftCount = parseFloat(secondShiftNumber.value) || 0;
-        const hasQueue = queueToggle.checked;
-        const queueCount = parseFloat(queueNumber.value) || 0;
-        const schoolNeed = Math.round(population * SCHOOL_RATE * districtCoeff);
-        const kinderNeed = Math.round(population * KINDER_RATE * districtCoeff);
-        const selectedDistrict = citySearchInput.value || "не выбран";
-        const schoolLoad = schoolPlanVal > 0 ? (schoolActualVal / schoolPlanVal) * 100 : 0;
-        const kinderLoad = kinderPlanVal > 0 ? (kinderActualVal / kinderPlanVal) * 100 : 0;
-
-        // Определяем, сколько детей можно отправить в существующие объекты
-        let schoolCanTake = 0;
-        if (schoolPlanVal > 0 && !hasSecond) {
-            let maxGoodLoad = 120; // 120% — это допустимая перегрузка
-            let currentLoadPercent = (schoolActualVal / schoolPlanVal) * 100;
-            if (currentLoadPercent < maxGoodLoad) {
-                schoolCanTake = Math.floor(schoolPlanVal * (maxGoodLoad / 100) - schoolActualVal);
-                if (schoolCanTake < 0) schoolCanTake = 0;
-            }
-        }
-        
-        let kinderCanTake = 0;
-        if (kinderPlanVal > 0 && !hasQueue) {
-            let maxGoodLoad = 140; // 140% — допустимая перегрузка для садов
-            let currentLoadPercent = (kinderActualVal / kinderPlanVal) * 100;
-            if (currentLoadPercent < maxGoodLoad) {
-                kinderCanTake = Math.floor(kinderPlanVal * (maxGoodLoad / 100) - kinderActualVal);
-                if (kinderCanTake < 0) kinderCanTake = 0;
-            }
-        }
-        
-        // Сколько нужно строить
-        let schoolToBuild = Math.max(0, schoolNeed - schoolCanTake);
-        let kinderToBuild = Math.max(0, kinderNeed - kinderCanTake);
-        
-        // Учитываем минимальный размер объектов
-        const MIN_SCHOOL_SIZE = 200;
-        const MIN_KINDER_SIZE = 50;
-        
-        let schoolBuildText = "";
-        if (schoolToBuild <= 0) {
-            schoolBuildText = "строительство школы не требуется";
-        } else if (schoolToBuild < MIN_SCHOOL_SIZE) {
-            schoolBuildText = `нужно построить школу на ${MIN_SCHOOL_SIZE} мест (при нормативе ${schoolNeed}, можно присоединить к соседнему проекту)`;
-        } else {
-            schoolBuildText = `нужно построить школу на ${schoolToBuild} мест`;
-        }
-        
-        let kinderBuildText = "";
-        if (kinderToBuild <= 0) {
-            kinderBuildText = "строительство сада не требуется";
-        } else if (kinderToBuild < MIN_KINDER_SIZE) {
-            kinderBuildText = `нужен встроенно-пристроенный сад на ${MIN_KINDER_SIZE} мест`;
-        } else {
-            kinderBuildText = `нужно построить сад на ${kinderToBuild} мест`;
-        }
-
-        let prompt = `Ты эксперт по градостроительству. Застройщик должен обеспечить ${schoolNeed} школьных мест и ${kinderNeed} мест в садах для нового ЖК.
-
-Твоя задача — проанализировать существующие объекты и сказать, сколько детей можно отправить в них, а сколько нужно строить.
-
-Данные:
-- Существующая школа: мощность ${schoolPlanVal} мест, загружена на ${schoolLoad.toFixed(0)}%. Вторая смена: ${hasSecond ? "есть" : "нет"}.
-- Существующий сад: мощность ${kinderPlanVal} мест, загружена на ${kinderLoad.toFixed(0)}%. Очередь: ${hasQueue ? "есть" : "нет"}.
-
-Правила:
-- В школу можно отправить детей, если нет второй смены и загрузка не превысит 120% (это хорошая загрузка).
-- В сад можно отправить детей, если нет очереди и загрузка не превысит 140% (это хорошая загрузка).
-- Если есть вторая смена или очередь — объект переполнен, новых детей не принимает.
-- Минимальный размер новой школы — 200 мест (меньше не строим).
-- Минимальный размер нового сада — 50 мест (если нужно меньше — делаем встроенно-пристроенный).
-
-Расчёт уже сделан:
-- В существующую школу можно отправить до ${schoolCanTake} детей.
-- В существующий сад можно отправить до ${kinderCanTake} детей.
-- Остаётся построить школу на ${Math.max(0, schoolNeed - schoolCanTake)} мест.
-- Остаётся построить сад на ${Math.max(0, kinderNeed - kinderCanTake)} мест.
-
-С учётом минимальных размеров:
-${schoolBuildText}
-${kinderBuildText}
-
-Дай короткий ответ (3-4 предложения), объясни:
-1. Сколько детей можно отправить в существующие объекты.
-2. Что нужно построить (с указанием вместимости).
-3. Если строительство не требуется — напиши "строительство не требуется".
-Ответь на русском, дружелюбно и по делу.
-
-Уточнение пользователя: ${userMessage === "Дай рекомендацию по текущим данным" ? "нет" : userMessage}`;
-
+    
+    async function loadData() {
         try {
-            const response = await fetch(PROXY_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: prompt })
-            });
-            const data = await response.json();
-            typingDiv.remove();
-            if (data.reply) {
-                addMessage(data.reply, 'ai');
-                conversationHistory.push(`Пользователь: ${userMessage.substring(0, 100)}`);
-                conversationHistory.push(`ИИ: ${data.reply.substring(0, 100)}`);
-            } else if (data.error) {
-                addMessage(`❌ Ошибка: ${data.error}`, 'ai');
-            } else {
-                addMessage(`❌ Не удалось получить ответ`, 'ai');
+            const response = await fetch(CSV_URL);
+            const text = await response.text();
+            const rows = [];
+            const lines = text.split(/\r?\n/);
+            for (let line of lines) {
+                if (line.trim() === "") continue;
+                const cells = [];
+                let current = "", inQuote = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') inQuote = !inQuote;
+                    else if (ch === ',' && !inQuote) {
+                        cells.push(current);
+                        current = "";
+                    } else current += ch;
+                }
+                cells.push(current);
+                rows.push(cells.map(c => c.replace(/^"|"$/g, '')));
             }
+            if (rows.length < 2) return;
+            const dataRows = rows.slice(1);
+            
+            allObjects = [];
+            for (let row of dataRows) {
+                const name = row[COL.NAME] ? row[COL.NAME].trim() : "";
+                if (name === "") continue;
+                
+                const typeRaw = row[COL.TYPE] ? row[COL.TYPE].trim() : "";
+                const isSchool = typeRaw.toLowerCase().includes("школ");
+                const isGarden = typeRaw.toLowerCase().includes("сад") || typeRaw.toLowerCase().includes("детский сад");
+                const type = isSchool ? "Школа" : (isGarden ? "Детский сад" : "Другое");
+                
+                let capacity = 0;
+                const capRaw = row[COL.CAPACITY] ? row[COL.CAPACITY].toString().trim() : "";
+                if (capRaw) {
+                    const num = parseInt(capRaw.replace(/\s/g, '').replace(/[^0-9]/g, ''));
+                    if (!isNaN(num)) capacity = num;
+                }
+                
+                const zoneRaw = row[COL.ZONE] ? row[COL.ZONE].trim() : "";
+                let zone = "";
+                if (zoneRaw.toLowerCase().includes("зелен")) zone = "Зеленая";
+                else if (zoneRaw.toLowerCase().includes("желт")) zone = "Желтая";
+                else if (zoneRaw.toLowerCase().includes("красн")) zone = "Красная";
+                
+                allObjects.push({
+                    type, isSchool, isGarden,
+                    city: row[COL.CITY] || "",
+                    name: name,
+                    capacity: capacity,
+                    deadline: row[COL.DEADLINE] || "",
+                    inputYear: parseYear(row[COL.INPUT_YEAR]),
+                    openDate: cleanOpenDate(row[COL.OPEN_DATE]),
+                    openYear: parseYear(row[COL.OPEN_YEAR]),
+                    cost: row[COL.COST] || "",
+                    planLocal: row[COL.PLAN_LOCAL] || "",
+                    factLocal: row[COL.FACT_LOCAL] || "",
+                    secondShift: row[COL.SECOND_SHIFT] || "",
+                    pdfLink: fixPdfLink(row[COL.PDF] || ""),
+                    zone: zone,
+                    note: row[COL.NOTE] || ""
+                });
+            }
+            
+            renderTotalStats();
+            renderZoneCards();
+            renderYearTables();
+            renderFullObjectsList();
+            
         } catch (err) {
-            typingDiv.remove();
-            addMessage(`❌ Ошибка соединения: ${err.message}`, 'ai');
+            console.error(err);
         }
     }
-
-    function addMessage(text, sender) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${sender === 'user' ? 'user-message' : 'ai-message'}`;
-        msgDiv.innerText = text;
-        chatMessages.appendChild(msgDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    function renderTotalStats() {
+        const total = allObjects.length;
+        const seats = allObjects.reduce((s, o) => s + o.capacity, 0);
+        const schools = allObjects.filter(o => o.isSchool).length;
+        const schoolsSeats = allObjects.filter(o => o.isSchool).reduce((s, o) => s + o.capacity, 0);
+        const gardens = allObjects.filter(o => o.isGarden).length;
+        const gardensSeats = allObjects.filter(o => o.isGarden).reduce((s, o) => s + o.capacity, 0);
+        
+        document.getElementById("totalStats").innerHTML = `
+            <div class="stat-card" data-filter="all"><div class="big-number">${total}</div><div class="label">ВСЕГО ОБЪЕКТОВ</div><div class="detail">на ${seats.toLocaleString()} мест</div></div>
+            <div class="stat-card" data-filter="schools"><div class="big-number">${schools}</div><div class="label">ШКОЛЫ</div><div class="detail">${schoolsSeats.toLocaleString()} мест</div></div>
+            <div class="stat-card" data-filter="gardens"><div class="big-number">${gardens}</div><div class="label">ДЕТСКИЕ САДЫ</div><div class="detail">${gardensSeats.toLocaleString()} мест</div></div>
+        `;
+        
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const filter = card.getAttribute('data-filter');
+                let filtered = allObjects;
+                let title = "Все объекты";
+                if (filter === "schools") { filtered = allObjects.filter(o => o.isSchool); title = "Школы"; }
+                if (filter === "gardens") { filtered = allObjects.filter(o => o.isGarden); title = "Детские сады"; }
+                showDetailPanel(filtered, title);
+            });
+        });
     }
-
-    initialBtn.addEventListener('click', async () => {
-        const hasAnyData = (mainValue.value && parseFloat(mainValue.value) > 0) ||
-                           (schoolPlan.value && parseFloat(schoolPlan.value) > 0) ||
-                           (kinderPlan.value && parseFloat(kinderPlan.value) > 0);
-        if (!hasAnyData) {
-            alert("Пожалуйста, введите данные (площадь жилья или население) перед запросом.");
-            return;
+    
+    function renderZoneCards() {
+        const zones = { Зеленая: [], Желтая: [], Красная: [] };
+        allObjects.forEach(o => { if (zones[o.zone]) zones[o.zone].push(o); });
+        const colors = { Зеленая: "green", Желтая: "yellow", Красная: "red" };
+        const subtitles = { Зеленая: "можно перенести", Желтая: "социальная напряженность", Красная: "нельзя переносить" };
+        
+        let html = "";
+        for (let [zoneName, items] of Object.entries(zones)) {
+            const total = items.length;
+            const seats = items.reduce((s, o) => s + o.capacity, 0);
+            const schools = items.filter(o => o.isSchool);
+            const gardens = items.filter(o => o.isGarden);
+            
+            html += `<div class="zone-card ${colors[zoneName]}">
+                <div class="zone-title">${zoneName}</div>
+                <div class="zone-subtitle">${subtitles[zoneName]}</div>
+                <div class="total-stats" data-zone="${zoneName}" data-type="all">
+                    <span class="total-number">${total}</span>
+                    <span class="total-label">${declension(total, 'объект', 'объекта', 'объектов')}</span>
+                    <span class="total-number" style="margin-left:16px;">${seats.toLocaleString()}</span>
+                    <span class="total-label">мест</span>
+                </div>
+                <div class="split-stats">
+                    <div class="split-item" data-zone="${zoneName}" data-type="schools">
+                        <div class="label">Школы</div>
+                        <div class="number">${schools.length}</div>
+                        <div class="seats">${schools.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</div>
+                    </div>
+                    <div class="split-item" data-zone="${zoneName}" data-type="gardens">
+                        <div class="label">Сады</div>
+                        <div class="number">${gardens.length}</div>
+                        <div class="seats">${gardens.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</div>
+                    </div>
+                </div>
+            </div>`;
         }
-        addMessage("Дай рекомендацию по текущим данным", 'user');
-        await sendToAI("Дай рекомендацию по текущим данным", true);
-        initChat();
+        document.getElementById("zonesContainer").innerHTML = html;
+        
+        document.querySelectorAll('.total-stats').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const zone = el.getAttribute('data-zone');
+                const filtered = allObjects.filter(o => o.zone === zone);
+                showDetailPanel(filtered, `${zone} зона — все объекты`);
+            });
+        });
+        
+        document.querySelectorAll('.split-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const zone = item.getAttribute('data-zone');
+                const type = item.getAttribute('data-type');
+                let filtered = allObjects.filter(o => o.zone === zone);
+                if (type === "schools") filtered = filtered.filter(o => o.isSchool);
+                if (type === "gardens") filtered = filtered.filter(o => o.isGarden);
+                const title = `${zone} зона — ${type === "schools" ? "Школы" : "Детские сады"}`;
+                showDetailPanel(filtered, title);
+            });
+        });
+    }
+    
+    function renderYearTables() {
+        const openYears = new Map(), inputYears = new Map();
+        for (let obj of allObjects) {
+            if (obj.openYear) { if (!openYears.has(obj.openYear)) openYears.set(obj.openYear, []); openYears.get(obj.openYear).push(obj); }
+            if (obj.inputYear) { if (!inputYears.has(obj.inputYear)) inputYears.set(obj.inputYear, []); inputYears.get(obj.inputYear).push(obj); }
+        }
+        
+        const sortedOpen = Array.from(openYears.keys()).sort((a,b)=>a-b);
+        const sortedInput = Array.from(inputYears.keys()).sort((a,b)=>a-b);
+        let openHtml = "", inputHtml = "";
+        
+        for (let year of sortedOpen) {
+            const items = openYears.get(year);
+            const schools = items.filter(o => o.isSchool);
+            const gardens = items.filter(o => o.isGarden);
+            openHtml += `<tr>
+                <td class="clickable-cell" data-year="${year}" data-type="all" data-tab="open"><strong>${year}</strong></td>
+                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="schools" data-tab="open"><strong>${schools.length}</strong> ${declension(schools.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${schools.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
+                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="gardens" data-tab="open"><strong>${gardens.length}</strong> ${declension(gardens.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${gardens.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
+                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="all" data-tab="open"><strong>${items.length}</strong> ${declension(items.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${items.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
+            </tr>`;
+        }
+        
+        for (let year of sortedInput) {
+            const items = inputYears.get(year);
+            const schools = items.filter(o => o.isSchool);
+            const gardens = items.filter(o => o.isGarden);
+            inputHtml += `<tr>
+                <td class="clickable-cell" data-year="${year}" data-type="all" data-tab="input"><strong>${year}</strong></td>
+                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="schools" data-tab="input"><strong>${schools.length}</strong> ${declension(schools.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${schools.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
+                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="gardens" data-tab="input"><strong>${gardens.length}</strong> ${declension(gardens.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${gardens.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
+                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="all" data-tab="input"><strong>${items.length}</strong> ${declension(items.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${items.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
+            </tr>`;
+        }
+        
+        document.getElementById("openYearBody").innerHTML = openHtml || '<tr><td colspan="4">Нет данных</td></tr>';
+        document.getElementById("inputYearBody").innerHTML = inputHtml || '<tr><td colspan="4">Нет данных</td></tr>';
+        
+        document.querySelectorAll('.clickable-cell').forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const year = parseInt(cell.getAttribute('data-year'));
+                const type = cell.getAttribute('data-type');
+                const tab = cell.getAttribute('data-tab');
+                let filtered = allObjects.filter(o => (tab === "open" ? o.openYear === year : o.inputYear === year));
+                if (type === "schools") filtered = filtered.filter(o => o.isSchool);
+                if (type === "gardens") filtered = filtered.filter(o => o.isGarden);
+                const title = `${tab === "open" ? "Год открытия" : "Год ввода"} ${year} — ${type === "schools" ? "Школы" : (type === "gardens" ? "Детские сады" : "Все объекты")}`;
+                showDetailPanel(filtered, title);
+            });
+        });
+    }
+    
+    function renderFullObjectsList() {
+        const tbody = document.getElementById("fullObjectsBody");
+        const searchInput = document.getElementById("objectSearchInput");
+        
+        function filterAndRender() {
+            const searchTerm = searchInput.value.toLowerCase();
+            let filtered = allObjects;
+            if (searchTerm) {
+                filtered = allObjects.filter(obj => 
+                    obj.name.toLowerCase().includes(searchTerm) ||
+                    obj.city.toLowerCase().includes(searchTerm) ||
+                    obj.type.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            let html = "";
+            filtered.forEach((obj, idx) => {
+                const hasPdf = obj.pdfLink && obj.pdfLink !== "";
+                html += `<tr>
+                    <td>${idx+1}</td>
+                    <td>${obj.type}</td>
+                    <td>${obj.city}</td>
+                    <td><strong>${obj.name.substring(0, 80)}${obj.name.length > 80 ? "…" : ""}</strong></td>
+                    <td>${obj.capacity.toLocaleString()}</td>
+                    <td>${obj.zone || "—"}</td>
+                    <td>${obj.inputYear || "—"}</td>
+                    <td>${obj.openDate || "—"}</td>
+                    <td>${hasPdf ? `<button class="btn-pdf" data-pdf="${obj.pdfLink}">Открыть</button>` : "Отсутствует"}</td>
+                    <td><button class="btn-detail" data-obj='${JSON.stringify(obj)}'>Подробнее</button></td>
+                </tr>`;
+            });
+            if (filtered.length === 0) html = `<tr><td colspan="10" style="text-align:center;">Ничего не найдено</td></tr>`;
+            tbody.innerHTML = html;
+            
+            document.querySelectorAll('#fullObjectsBody .btn-pdf').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const url = btn.getAttribute('data-pdf');
+                    if (url) { document.getElementById("pdfFrame").src = url; document.getElementById("pdfModal").style.display = "flex"; }
+                });
+            });
+            document.querySelectorAll('#fullObjectsBody .btn-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const obj = JSON.parse(btn.getAttribute('data-obj'));
+                    openSidePanel(obj);
+                });
+            });
+        }
+        
+        filterAndRender();
+        searchInput.addEventListener('input', filterAndRender);
+    }
+    
+    function showDetailPanel(items, title) {
+        const panel = document.getElementById("detailPanel");
+        document.getElementById("panelTitle").innerHTML = `${title} — ${items.length} ${declension(items.length, 'объект', 'объекта', 'объектов')}`;
+        
+        let html = `<table style="width:100%; border-collapse:collapse;"><thead><tr><th>№</th><th>Тип</th><th>Округ</th><th>Наименование</th><th>Мощность</th><th>Год ввода</th><th>Открытие</th><th>План в локации</th><th>Факт в локации</th><th>2-я смена / очередность 3-7</th><th>Презентация</th><th>Детали</th></tr></thead><tbody>`;
+        
+        items.forEach((obj, idx) => {
+            const hasPdf = obj.pdfLink && obj.pdfLink !== "";
+            html += `<tr>
+                <td>${idx+1}</td>
+                <td>${obj.type}</td>
+                <td>${obj.city}</td>
+                <td><strong>${obj.name.substring(0, 60)}</strong></td>
+                <td>${obj.capacity.toLocaleString()}</td>
+                <td>${obj.inputYear || "—"}</td>
+                <td>${obj.openDate || "—"}</td>
+                <td>${obj.planLocal || "—"}</td>
+                <td>${obj.factLocal || "—"}</td>
+                <td>${obj.secondShift || "—"}</td>
+                <td>${hasPdf ? `<button class="btn-pdf" data-pdf="${obj.pdfLink}">Открыть</button>` : "Отсутствует"}</td>
+                <td><button class="btn-detail" data-obj='${JSON.stringify(obj)}'>Подробнее</button></td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+        document.getElementById("panelContent").innerHTML = html;
+        panel.style.display = "block";
+        panel.scrollIntoView({ behavior: "smooth" });
+        
+        document.querySelectorAll('#panelContent .btn-pdf').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const url = btn.getAttribute('data-pdf');
+                if (url) { document.getElementById("pdfFrame").src = url; document.getElementById("pdfModal").style.display = "flex"; }
+            });
+        });
+        document.querySelectorAll('#panelContent .btn-detail').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const obj = JSON.parse(btn.getAttribute('data-obj'));
+                openSidePanel(obj);
+            });
+        });
+    }
+    
+    function openSidePanel(obj) {
+        const hasPdf = obj.pdfLink && obj.pdfLink !== "";
+        document.getElementById("sidePanelTitle").innerHTML = `Карточка объекта: ${obj.name.substring(0, 50)}`;
+        document.getElementById("sidePanelContent").innerHTML = `
+            <table class="detail-table">
+                <tr><td style="font-weight:600;">Тип</td><td><strong>${obj.type}</strong></td></tr>
+                <tr><td style="font-weight:600;">Городской округ</td><td>${obj.city || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Наименование</td><td>${obj.name}</td></tr>
+                <tr><td style="font-weight:600;">Мощность</td><td>${obj.capacity.toLocaleString()} мест</td></tr>
+                <tr><td style="font-weight:600;">Зона</td><td>${obj.zone || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Сроки реализации</td><td>${obj.deadline || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Стоимость, тыс. руб.</td><td>${obj.cost || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Год ввода</td><td>${obj.inputYear || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Открытие</td><td>${obj.openDate || "—"}</td></tr>
+                <tr><td style="font-weight:600;">План в локации</td><td>${obj.planLocal || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Факт в локации</td><td>${obj.factLocal || "—"}</td></tr>
+                <tr><td style="font-weight:600;">2-я смена / очередность 3-7</td><td>${obj.secondShift || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Примечание</td><td>${obj.note || "—"}</td></tr>
+                <tr><td style="font-weight:600;">Презентация</td><td>${hasPdf ? `<button class="btn-pdf" data-pdf="${obj.pdfLink}">Открыть</button>` : "Отсутствует"}</td></tr>
+            </table>
+        `;
+        document.getElementById("sidePanel").classList.add("open");
+        document.getElementById("overlay").classList.add("active");
+        
+        document.querySelectorAll('#sidePanelContent .btn-pdf').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const url = btn.getAttribute('data-pdf');
+                if (url) { document.getElementById("pdfFrame").src = url; document.getElementById("pdfModal").style.display = "flex"; }
+            });
+        });
+    }
+    
+    document.getElementById("closePanelBtn").addEventListener("click", () => {
+        document.getElementById("detailPanel").style.display = "none";
     });
-
-    function toggleSecondShiftField() {
-        secondShiftNumber.style.display = secondShiftToggle.checked ? "inline-block" : "none";
-        recalcAll();
-    }
-    function toggleQueueField() {
-        queueNumber.style.display = queueToggle.checked ? "inline-block" : "none";
-        recalcAll();
-    }
-
-    secondShiftToggle.addEventListener('change', toggleSecondShiftField);
-    queueToggle.addEventListener('change', toggleQueueField);
-    secondShiftNumber.addEventListener('input', recalcAll);
-    queueNumber.addEventListener('input', recalcAll);
-    schoolPlan.addEventListener('input', recalcAll);
-    schoolActual.addEventListener('input', recalcAll);
-    kinderPlan.addEventListener('input', recalcAll);
-    kinderActual.addEventListener('input', recalcAll);
-    calcType.addEventListener('change', () => { updateHint(); recalcAll(); });
-    mainValue.addEventListener('input', recalcAll);
-
-    function init() {
-        updateHint();
-        recalcAll();
-        toggleSecondShiftField();
-        toggleQueueField();
-    }
-    init();
+    document.getElementById("modalClose").addEventListener("click", () => {
+        document.getElementById("pdfModal").style.display = "none";
+        document.getElementById("pdfFrame").src = "";
+    });
+    window.onclick = (e) => { if (e.target === document.getElementById("pdfModal")) { document.getElementById("pdfModal").style.display = "none"; document.getElementById("pdfFrame").src = ""; } };
+    
+    document.getElementById("sidePanelClose").addEventListener("click", () => {
+        document.getElementById("sidePanel").classList.remove("open");
+        document.getElementById("overlay").classList.remove("active");
+    });
+    document.getElementById("overlay").addEventListener("click", () => {
+        document.getElementById("sidePanel").classList.remove("open");
+        document.getElementById("overlay").classList.remove("active");
+    });
+    
+    document.querySelectorAll('.year-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-year-tab');
+            document.querySelectorAll('.year-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.year-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    
+    document.querySelectorAll('.main-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-main-tab');
+            document.querySelectorAll('.main-tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    
+    loadData();
+    setInterval(loadData, 300000);
 </script>
 </body>
 </html>
