@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дашборд — Образовательная инфраструктура Московской области</title>
+    <title>Прогон образовательной инфраструктуры в ЖК</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -247,6 +247,160 @@
         .all-fields-title { font-size: 14px; font-weight: 800; color: #1e4663; margin: 14px 0 8px 0; }
         .detail-table td:first-child { white-space: normal; }
         
+
+
+        .detail-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+        }
+        .filter-wrap { position: relative; min-width: 180px; }
+        .filter-button {
+            width: 100%;
+            border: 1px solid #cbdff2;
+            background: white;
+            color: #143a56;
+            border-radius: 999px;
+            padding: 10px 38px 10px 14px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(15, 43, 61, 0.04);
+            transition: 0.15s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .filter-button::after {
+            content: '⌄';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-52%);
+            color: #2c7da0;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .filter-button:hover, .filter-button.active { background: #eef8ff; border-color: #7fc3df; }
+        .filter-button.has-value { background: #dff2ff; border-color: #2c7da0; color: #0f2b3d; }
+        .filter-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: min(360px, 88vw);
+            background: white;
+            border: 1px solid #cbdff2;
+            border-radius: 18px;
+            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+            z-index: 30;
+            padding: 10px;
+            display: none;
+        }
+        .filter-menu.open { display: block; }
+        .filter-search {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 8px;
+        }
+        .filter-options { max-height: 270px; overflow: auto; }
+        .filter-option {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 10px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            color: #163b56;
+            font-weight: 650;
+        }
+        .filter-option:hover, .filter-option.selected { background: #eef8ff; }
+        .filter-option .count { color: #64748b; font-weight: 700; }
+        .filter-reset-btn {
+            border: none;
+            background: #e2edf6;
+            color: #1e4663;
+            border-radius: 999px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 13px;
+        }
+        .filter-reset-btn:hover { background: #cbdff2; }
+        .calendar-menu { width: 320px; }
+        .calendar-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #0f2b3d;
+            font-weight: 800;
+        }
+        .calendar-nav {
+            border: none;
+            background: #eef6fb;
+            color: #1e4663;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .calendar-weekdays, .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .calendar-weekdays div {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 0;
+        }
+        .calendar-day {
+            border: none;
+            background: transparent;
+            height: 36px;
+            border-radius: 999px;
+            color: #1e293b;
+            cursor: default;
+            font-weight: 700;
+        }
+        .calendar-day.in-month.has-items { background: #dff2ff; color: #1e4663; cursor: pointer; box-shadow: inset 0 0 0 1px #9bd2e8; }
+        .calendar-day.in-month.has-items:hover { background: #bde8f8; }
+        .calendar-day.selected { background: #1e4663 !important; color: white !important; box-shadow: none !important; }
+        .calendar-day.empty { visibility: hidden; }
+        .calendar-legend { margin-top: 10px; color: #64748b; font-size: 12px; line-height: 1.35; }
+        .calendar-clear {
+            width: 100%;
+            margin-top: 10px;
+            border: none;
+            border-radius: 12px;
+            background: #f1f5f9;
+            color: #1e4663;
+            padding: 9px;
+            cursor: pointer;
+            font-weight: 800;
+        }
+        .detail-result-note { color: #64748b; font-size: 13px; margin: 0 0 12px 2px; }
+
         .footer { margin-top: 32px; text-align: center; font-size: 12px; color: #6c7f8f; }
         
 
@@ -294,7 +448,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Образовательная инфраструктура Московской области</h1>
+    <h1>Прогон образовательной инфраструктуры в ЖК</h1>
 
     <div id="tabAnalytics" class="main-tab-content active">
         <div class="stats-row" id="totalStats">
@@ -389,6 +543,10 @@
     let allObjects = [];
     let tableHeaders = DEFAULT_HEADERS.slice();
     let activeFilter = null;
+    let currentDetailBaseItems = [];
+    let currentDetailTitle = 'Список проектов';
+    let tableFilters = { district: '', developer: '', name: '', date: '' };
+    let calendarViewDate = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -743,6 +901,7 @@
             });
 
             activeFilter = null;
+            tableFilters = { district: '', developer: '', name: '', date: '' };
             renderTotalStats();
             renderDistrictDeveloperTables();
             showDetailPanel(allObjects, 'Список проектов', false);
@@ -780,11 +939,13 @@
 
                 if (activeFilter && activeFilter.kind === 'stat' && activeFilter.key === filter) {
                     resetFilters();
-                    showDetailPanel(allObjects, 'Список проектов');
+                    tableFilters = { district: '', developer: '', name: '', date: '' };
+                    showDetailPanel(allObjects, 'Список проектов', false);
                     return;
                 }
 
                 resetFilters();
+                tableFilters = { district: '', developer: '', name: '', date: '' };
                 activeFilter = { kind: 'stat', key: filter };
                 card.classList.add('stat-active');
 
@@ -880,11 +1041,13 @@
 
                 if (activeFilter && activeFilter.kind === 'district' && activeFilter.key === key) {
                     resetFilters();
-                    showDetailPanel(allObjects, 'Список проектов');
+                    tableFilters = { district: '', developer: '', name: '', date: '' };
+                    showDetailPanel(allObjects, 'Список проектов', false);
                     return;
                 }
 
                 resetFilters();
+                tableFilters = { district: '', developer: '', name: '', date: '' };
                 activeFilter = { kind: 'district', key };
                 applyCrossHighlight('district', key);
                 showDetailPanel(allObjects.filter(o => normalizeText(o.city, 'Не указан') === key), `Городской округ: ${key}`);
@@ -897,11 +1060,13 @@
 
                 if (activeFilter && activeFilter.kind === 'developer' && activeFilter.key === key) {
                     resetFilters();
-                    showDetailPanel(allObjects, 'Список проектов');
+                    tableFilters = { district: '', developer: '', name: '', date: '' };
+                    showDetailPanel(allObjects, 'Список проектов', false);
                     return;
                 }
 
                 resetFilters();
+                tableFilters = { district: '', developer: '', name: '', date: '' };
                 activeFilter = { kind: 'developer', key };
                 applyCrossHighlight('developer', key);
                 showDetailPanel(allObjects.filter(o => normalizeText(o.developer, 'Не указан') === key), `Застройщик: ${key}`);
@@ -916,15 +1081,249 @@
         </tr>`;
     }
 
-    function showDetailPanel(items, title, shouldScroll = true) {
-        const panel = $('detailPanel');
-        $('panelTitle').innerHTML = `${escapeHtml(title)} — ${items.length} ${declension(items.length, 'проект', 'проекта', 'проектов')}`;
 
-        const rows = items.map((obj, idx) => {
+    function dateKeyFromDate(date) {
+        if (!date) return '';
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function dateKeyFromValue(value) {
+        const date = parseReviewDate(value);
+        return date ? dateKeyFromDate(date) : '';
+    }
+
+    function formatDateRuFromKey(key) {
+        if (!key) return '';
+        const match = key.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) return key;
+        return `${match[3]}.${match[2]}.${match[1]}`;
+    }
+
+    function getFilteredDetailItems() {
+        return currentDetailBaseItems.filter(obj => {
+            if (tableFilters.district && normalizeText(obj.city, 'Не указан') !== tableFilters.district) return false;
+            if (tableFilters.developer && normalizeText(obj.developer, 'Не указан') !== tableFilters.developer) return false;
+            if (tableFilters.name && normalizeText(obj.name, 'Без наименования') !== tableFilters.name) return false;
+            if (tableFilters.date && dateKeyFromValue(obj.reviewDateRaw) !== tableFilters.date) return false;
+            return true;
+        });
+    }
+
+    function optionCounts(field, items) {
+        const map = new Map();
+        items.forEach(obj => {
+            let value = '';
+            if (field === 'district') value = normalizeText(obj.city, 'Не указан');
+            if (field === 'developer') value = normalizeText(obj.developer, 'Не указан');
+            if (field === 'name') value = normalizeText(obj.name, 'Без наименования');
+            if (!value) return;
+            map.set(value, (map.get(value) || 0) + 1);
+        });
+        const collator = new Intl.Collator('ru', { sensitivity: 'base' });
+        return Array.from(map.entries()).sort((a, b) => collator.compare(a[0], b[0]));
+    }
+
+    function filterButtonTitle(field, label) {
+        const value = tableFilters[field];
+        if (!value) return label;
+        const shown = field === 'date' ? formatDateRuFromKey(value) : value;
+        return `${label}: ${shown}`;
+    }
+
+    function selectFilterHtml(field, label) {
+        const value = tableFilters[field];
+        const options = optionCounts(field, currentDetailBaseItems);
+        const optionsHtml = [
+            `<button class="filter-option ${value ? '' : 'selected'}" data-filter-option="${field}" data-value=""><span>Все</span><span class="count">${currentDetailBaseItems.length}</span></button>`,
+            ...options.map(([option, count]) => `<button class="filter-option ${option === value ? 'selected' : ''}" data-filter-option="${field}" data-value="${encodeURIComponent(option)}"><span>${escapeHtml(option)}</span><span class="count">${count}</span></button>`)
+        ].join('');
+        return `<div class="filter-wrap">
+            <button class="filter-button ${value ? 'has-value' : ''}" data-filter-toggle="${field}" title="${escapeHtml(filterButtonTitle(field, label))}">${escapeHtml(filterButtonTitle(field, label))}</button>
+            <div class="filter-menu" data-filter-menu="${field}">
+                <input class="filter-search" data-filter-search="${field}" type="text" placeholder="Быстрый поиск...">
+                <div class="filter-options">${optionsHtml}</div>
+            </div>
+        </div>`;
+    }
+
+    function availableDateKeys() {
+        const set = new Set();
+        currentDetailBaseItems.forEach(obj => {
+            const key = dateKeyFromValue(obj.reviewDateRaw);
+            if (key) set.add(key);
+        });
+        return set;
+    }
+
+    function ensureCalendarViewDate() {
+        if (calendarViewDate) return;
+        if (tableFilters.date) {
+            const [y, m] = tableFilters.date.split('-').map(Number);
+            calendarViewDate = new Date(y, m - 1, 1);
+            return;
+        }
+        const keys = Array.from(availableDateKeys()).sort();
+        if (keys.length) {
+            const [y, m] = keys[keys.length - 1].split('-').map(Number);
+            calendarViewDate = new Date(y, m - 1, 1);
+            return;
+        }
+        const now = new Date();
+        calendarViewDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+
+    function calendarHtml() {
+        ensureCalendarViewDate();
+        const year = calendarViewDate.getFullYear();
+        const month = calendarViewDate.getMonth();
+        const monthName = calendarViewDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+        const first = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startOffset = (first.getDay() + 6) % 7;
+        const dates = availableDateKeys();
+        const cells = [];
+        for (let i = 0; i < startOffset; i++) cells.push('<button class="calendar-day empty" type="button"></button>');
+        for (let day = 1; day <= daysInMonth; day++) {
+            const key = dateKeyFromDate(new Date(year, month, day));
+            const hasItems = dates.has(key);
+            const selected = tableFilters.date === key;
+            cells.push(`<button class="calendar-day in-month ${hasItems ? 'has-items' : ''} ${selected ? 'selected' : ''}" type="button" data-date-option="${key}" ${hasItems ? '' : 'disabled'}>${day}</button>`);
+        }
+        return `<div class="filter-wrap">
+            <button class="filter-button ${tableFilters.date ? 'has-value' : ''}" data-filter-toggle="date" title="${escapeHtml(filterButtonTitle('date', 'Дата прогона'))}">${escapeHtml(filterButtonTitle('date', 'Дата прогона'))}</button>
+            <div class="filter-menu calendar-menu" data-filter-menu="date">
+                <div class="calendar-head">
+                    <button class="calendar-nav" type="button" data-calendar-nav="prev">‹</button>
+                    <div>${escapeHtml(monthName.charAt(0).toUpperCase() + monthName.slice(1))}</div>
+                    <button class="calendar-nav" type="button" data-calendar-nav="next">›</button>
+                </div>
+                <div class="calendar-weekdays"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
+                <div class="calendar-grid">${cells.join('')}</div>
+                <div class="calendar-legend">Выделены даты, по которым есть данные в таблице.</div>
+                <button class="calendar-clear" type="button" data-calendar-clear>Сбросить дату</button>
+            </div>
+        </div>`;
+    }
+
+    function filtersHtml() {
+        return `<div class="detail-toolbar" id="detailToolbar">
+            ${selectFilterHtml('district', 'г.о.')}
+            ${selectFilterHtml('developer', 'Застройщик')}
+            ${selectFilterHtml('name', 'Застройка')}
+            ${calendarHtml()}
+            <button class="filter-reset-btn" id="detailFiltersReset" type="button">Сбросить фильтры</button>
+        </div>`;
+    }
+
+    function closeFilterMenus(exceptField = '') {
+        document.querySelectorAll('[data-filter-menu]').forEach(menu => {
+            if (menu.getAttribute('data-filter-menu') !== exceptField) menu.classList.remove('open');
+        });
+        document.querySelectorAll('[data-filter-toggle]').forEach(btn => {
+            if (btn.getAttribute('data-filter-toggle') !== exceptField) btn.classList.remove('active');
+        });
+    }
+
+    function bindDetailFilterEvents() {
+        document.querySelectorAll('[data-filter-toggle]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const field = btn.getAttribute('data-filter-toggle');
+                const menu = document.querySelector(`[data-filter-menu="${field}"]`);
+                const willOpen = menu && !menu.classList.contains('open');
+                closeFilterMenus(field);
+                if (menu) menu.classList.toggle('open', willOpen);
+                btn.classList.toggle('active', willOpen);
+                const search = document.querySelector(`[data-filter-search="${field}"]`);
+                if (willOpen && search) setTimeout(() => search.focus(), 0);
+            });
+        });
+
+        document.querySelectorAll('[data-filter-search]').forEach(input => {
+            input.addEventListener('input', () => {
+                const query = input.value.toLowerCase().trim();
+                const menu = input.closest('.filter-menu');
+                if (!menu) return;
+                menu.querySelectorAll('[data-filter-option]').forEach(option => {
+                    const text = option.innerText.toLowerCase();
+                    option.style.display = text.includes(query) ? '' : 'none';
+                });
+            });
+        });
+
+        document.querySelectorAll('[data-filter-option]').forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const field = option.getAttribute('data-filter-option');
+                const value = decodeURIComponent(option.getAttribute('data-value') || '');
+                tableFilters[field] = value;
+                closeFilterMenus();
+                renderCurrentDetail(false);
+            });
+        });
+
+        document.querySelectorAll('[data-calendar-nav]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                ensureCalendarViewDate();
+                const dir = btn.getAttribute('data-calendar-nav') === 'prev' ? -1 : 1;
+                calendarViewDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + dir, 1);
+                renderCurrentDetail(false);
+                setTimeout(() => {
+                    const menu = document.querySelector('[data-filter-menu="date"]');
+                    const toggle = document.querySelector('[data-filter-toggle="date"]');
+                    if (menu) menu.classList.add('open');
+                    if (toggle) toggle.classList.add('active');
+                }, 0);
+            });
+        });
+
+        document.querySelectorAll('[data-date-option]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                tableFilters.date = btn.getAttribute('data-date-option') || '';
+                closeFilterMenus();
+                renderCurrentDetail(false);
+            });
+        });
+
+        const clearDate = document.querySelector('[data-calendar-clear]');
+        if (clearDate) clearDate.addEventListener('click', (e) => {
+            e.stopPropagation();
+            tableFilters.date = '';
+            closeFilterMenus();
+            renderCurrentDetail(false);
+        });
+
+        const resetBtn = $('detailFiltersReset');
+        if (resetBtn) resetBtn.addEventListener('click', () => {
+            tableFilters = { district: '', developer: '', name: '', date: '' };
+            renderCurrentDetail(false);
+        });
+    }
+
+    function renderCurrentDetail(shouldScroll = false) {
+        showDetailPanel(currentDetailBaseItems, currentDetailTitle, shouldScroll, true);
+    }
+
+    function showDetailPanel(items, title, shouldScroll = true, keepFilters = false) {
+        currentDetailBaseItems = Array.isArray(items) ? items.slice() : [];
+        currentDetailTitle = title || 'Список проектов';
+        if (!keepFilters) {
+            tableFilters = { district: '', developer: '', name: '', date: '' };
+            calendarViewDate = null;
+        }
+
+        const panel = $('detailPanel');
+        const filteredItems = getFilteredDetailItems();
+        $('panelTitle').innerHTML = `${escapeHtml(currentDetailTitle)} — ${filteredItems.length} ${declension(filteredItems.length, 'проект', 'проекта', 'проектов')}`;
+
+        const rows = filteredItems.map((obj, idx) => {
             const sourceIndex = allObjects.indexOf(obj);
             const hasPdf = obj.pdfLink && obj.pdfLink !== '';
-            const statusClass = isReviewed(obj) ? 'reviewed' : 'not-reviewed';
-            const statusText = isReviewed(obj) ? 'Рассмотрено' : 'Не рассмотрено';
             return `<tr>
                 <td class="project-index">${idx + 1}</td>
                 <td>${escapeHtml(obj.city || '—')}</td>
@@ -937,9 +1336,11 @@
             </tr>`;
         }).join('');
 
-        $('panelContent').innerHTML = `<div class="project-table-wrapper"><table class="project-table"><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Ссылка на презентацию</th><th>Дополнительно</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Нет данных</td></tr>'}</tbody></table></div>`;
+        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Ссылка на презентацию</th><th>Дополнительно</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Нет данных</td></tr>'}</tbody></table></div>`;
         panel.style.display = 'block';
         if (shouldScroll) panel.scrollIntoView({ behavior: 'smooth' });
+
+        bindDetailFilterEvents();
 
         document.querySelectorAll('#panelContent .btn-link').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -1038,6 +1439,10 @@
             $('pdfModal').style.display = 'none';
             $('pdfFrame').src = '';
         }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.filter-wrap')) closeFilterMenus();
     });
 
     loadData();
