@@ -56,6 +56,12 @@
         .stat-card .big-number { font-size: 42px; font-weight: 800; color: #1e4663; }
         .stat-card .label { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #5f7f9e; margin-top: 8px; }
         .stat-card .detail { font-size: 13px; color: #3b5c7a; margin-top: 6px; }
+        .stat-card.stat-active {
+            border-color: #2c7da0;
+            box-shadow: 0 10px 26px rgba(44,125,160,0.18);
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #ffffff 0%, #f1f9fd 100%);
+        }
         
         .zones-row { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 40px; }
         .zone-card {
@@ -186,14 +192,37 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(15, 23, 42, 0.38);
             z-index: 1100;
             justify-content: center;
             align-items: center;
+            padding: 12px;
         }
-        .modal-content { background: white; border-radius: 20px; width: 90%; height: 90%; position: relative; overflow: hidden; }
-        .modal-close { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; background: white; width: 40px; height: 40px; border-radius: 40px; text-align: center; line-height: 35px; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .modal-content {
+            background: white;
+            border-radius: 14px;
+            width: min(98vw, 1800px);
+            height: 96vh;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.28);
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            z-index: 2;
+            font-size: 30px;
+            cursor: pointer;
+            background: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 40px;
+            text-align: center;
+            line-height: 38px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+        }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
         
         .btn-pdf { background: #e76f51; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
         .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
@@ -359,6 +388,7 @@
 
     let allObjects = [];
     let tableHeaders = DEFAULT_HEADERS.slice();
+    let activeFilter = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -520,7 +550,7 @@
         if (openMatch) return `https://drive.google.com/file/d/${openMatch[1]}/preview`;
 
         let presentationMatch = clean.match(/docs\.google\.com\/presentation\/d\/([^/]+)/i);
-        if (presentationMatch) return `https://docs.google.com/presentation/d/${presentationMatch[1]}/preview`;
+        if (presentationMatch) return `https://docs.google.com/presentation/d/${presentationMatch[1]}/embed?start=false&loop=false&delayms=3000`;
 
         if (clean.includes("drive.google.com")) {
             if (clean.includes("/view")) return clean.replace("/view", "/preview");
@@ -712,6 +742,7 @@
                 });
             });
 
+            activeFilter = null;
             renderTotalStats();
             renderDistrictDeveloperTables();
             showDetailPanel(allObjects, 'Список проектов', false);
@@ -746,7 +777,17 @@
         document.querySelectorAll('.stat-card[data-filter]').forEach(card => {
             card.addEventListener('click', () => {
                 const filter = card.getAttribute('data-filter');
-                clearSummaryHighlight();
+
+                if (activeFilter && activeFilter.kind === 'stat' && activeFilter.key === filter) {
+                    resetFilters();
+                    showDetailPanel(allObjects, 'Список проектов');
+                    return;
+                }
+
+                resetFilters();
+                activeFilter = { kind: 'stat', key: filter };
+                card.classList.add('stat-active');
+
                 let filtered = allObjects;
                 let title = 'Все проекты';
                 if (filter === 'reviewed') { filtered = allObjects.filter(o => isReviewed(o)); title = 'Рассмотрены'; }
@@ -801,6 +842,18 @@
         });
     }
 
+    function clearStatHighlight() {
+        document.querySelectorAll('.stat-card[data-filter]').forEach(card => {
+            card.classList.remove('stat-active');
+        });
+    }
+
+    function resetFilters() {
+        activeFilter = null;
+        clearSummaryHighlight();
+        clearStatHighlight();
+    }
+
     function applyCrossHighlight(kind, key) {
         const oppositeKind = kind === 'district' ? 'developer' : 'district';
         const related = getRelatedKeys(kind, key);
@@ -824,6 +877,15 @@
         document.querySelectorAll('[data-summary="district"]').forEach(row => {
             row.addEventListener('click', () => {
                 const key = decodeURIComponent(row.getAttribute('data-key'));
+
+                if (activeFilter && activeFilter.kind === 'district' && activeFilter.key === key) {
+                    resetFilters();
+                    showDetailPanel(allObjects, 'Список проектов');
+                    return;
+                }
+
+                resetFilters();
+                activeFilter = { kind: 'district', key };
                 applyCrossHighlight('district', key);
                 showDetailPanel(allObjects.filter(o => normalizeText(o.city, 'Не указан') === key), `Городской округ: ${key}`);
             });
@@ -832,6 +894,15 @@
         document.querySelectorAll('[data-summary="developer"]').forEach(row => {
             row.addEventListener('click', () => {
                 const key = decodeURIComponent(row.getAttribute('data-key'));
+
+                if (activeFilter && activeFilter.kind === 'developer' && activeFilter.key === key) {
+                    resetFilters();
+                    showDetailPanel(allObjects, 'Список проектов');
+                    return;
+                }
+
+                resetFilters();
+                activeFilter = { kind: 'developer', key };
                 applyCrossHighlight('developer', key);
                 showDetailPanel(allObjects.filter(o => normalizeText(o.developer, 'Не указан') === key), `Застройщик: ${key}`);
             });
@@ -897,28 +968,33 @@
     function buildAllFieldsRows(obj) {
         const originalRow = obj.originalRow || [];
         const max = Math.max(tableHeaders.length, DEFAULT_HEADERS.length, originalRow.length);
+        const duplicateFields = new Set([
+            COL.NUMBER,
+            COL.DISTRICT,
+            COL.NAME,
+            COL.DEVELOPER,
+            COL.REVIEW_DATE,
+            COL.ADMIN_POSITION,
+            COL.PDF
+        ]);
         let rows = '';
 
         for (let i = 0; i < max; i++) {
+            if (duplicateFields.has(i)) continue;
+
             const label = getHeaderLabel(i);
             const rawValue = originalRow[i];
-            const isPresentation = i === COL.PDF && obj.pdfLink;
 
-            if (!hasFilledValue(rawValue) && !isPresentation) continue;
+            if (!hasFilledValue(rawValue)) continue;
 
             let displayValue = rawValue;
             if (i === COL.NEW_RNGP_GARDEN || i === COL.DIFF_GARDEN) displayValue = numericGardenFieldDisplay(i, rawValue);
 
-            if (!hasFilledValue(displayValue) && !isPresentation) continue;
+            if (!hasFilledValue(displayValue)) continue;
 
-            let valueHtml = escapeHtml(displayValue);
-            if (isPresentation) {
-                valueHtml = `<button class="btn-link" id="sidePdfBtn">Открыть презентацию</button>`;
-            }
-
-            rows += `<tr><td>${escapeHtml(label)}</td><td>${valueHtml}</td></tr>`;
+            rows += `<tr><td>${escapeHtml(label)}</td><td>${escapeHtml(displayValue)}</td></tr>`;
         }
-        return rows || '<tr><td colspan="2">Нет заполненных данных</td></tr>';
+        return rows || '<tr><td colspan="2">Нет дополнительных заполненных данных</td></tr>';
     }
 
     function openSidePanel(obj) {
