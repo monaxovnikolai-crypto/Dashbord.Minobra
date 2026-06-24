@@ -197,52 +197,118 @@
         
         .btn-pdf { background: #e76f51; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
         .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+
+        .project-table-wrapper { overflow-x: auto; }
+        .project-table { min-width: 980px; }
+        .project-table th { white-space: nowrap; }
+        .project-table td { vertical-align: top; }
+        .project-index { font-weight: 800; color: #1e4663; text-align: center; }
+        .project-name { font-weight: 700; color: #0f2b3d; line-height: 1.35; }
+        .project-small { color: #64748b; font-size: 12px; line-height: 1.35; }
+        .status-pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .status-pill.reviewed { background: #e8f5e9; color: #166534; border: 1px solid #b7e1c0; }
+        .status-pill.not-reviewed { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+        .btn-link { background: #e76f51; color: white; border: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .btn-link:hover { filter: brightness(0.96); transform: translateY(-1px); }
+        .btn-more { background: #2c7da0; color: white; border: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .btn-more:hover { filter: brightness(0.96); transform: translateY(-1px); }
+        .project-meta { display: grid; grid-template-columns: 1fr; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 14px; margin-bottom: 18px; }
+        .project-meta-title { font-weight: 800; color: #0f2b3d; line-height: 1.35; }
+        .project-meta-line { color: #475569; font-size: 13px; line-height: 1.45; }
+        .all-fields-title { font-size: 14px; font-weight: 800; color: #1e4663; margin: 14px 0 8px 0; }
+        .detail-table td:first-child { white-space: normal; }
         
         .footer { margin-top: 32px; text-align: center; font-size: 12px; color: #6c7f8f; }
         
+
+        .summary-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-bottom: 40px; }
+        .summary-card {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            min-width: 0;
+        }
+        .summary-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+        .summary-card h2 { font-size: 22px; color: #0f2b3d; margin: 0 0 6px 0; }
+        .summary-note { font-size: 13px; color: #64748b; line-height: 1.35; }
+        .summary-badge { background: #eef6fb; color: #1e4663; border: 1px solid #cbdff2; border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+        .summary-table-wrapper { max-height: 560px; overflow: auto; border-radius: 18px; border: 1px solid #e2e8f0; }
+        .summary-table th { position: sticky; top: 0; z-index: 1; }
+        .summary-table tbody tr { cursor: pointer; transition: background 0.15s ease, opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; }
+        .summary-table tbody tr:hover { background: #f1f7fb; }
+        .summary-table tbody tr.summary-muted { opacity: 0.32; }
+        .summary-table tbody tr.summary-related {
+            background: linear-gradient(90deg, #eef8ff 0%, #ffffff 100%);
+            box-shadow: inset 4px 0 0 #7fc3df;
+            opacity: 1;
+        }
+        .summary-table tbody tr.summary-active {
+            background: linear-gradient(90deg, #dff2ff 0%, #ffffff 100%);
+            box-shadow: inset 5px 0 0 #2c7da0, 0 4px 14px rgba(44,125,160,0.14);
+            outline: 1px solid #b7dff1;
+            transform: translateX(2px);
+            opacity: 1;
+        }
+        .summary-table td:first-child { font-weight: 600; color: #163b56; }
+        .summary-table .muted { color: #64748b; font-size: 12px; font-weight: 500; }
+        .hidden-section { display: none !important; }
+
         @media (max-width: 700px) {
             .side-panel { width: 100%; right: -100%; }
             .zones-row { flex-direction: column; }
             .stats-row { flex-direction: column; }
+            .summary-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Образовательная инфраструктура Московской области</h1>
-   
-    <div class="main-tabs">
-        <button class="main-tab-btn active" data-main-tab="tabAnalytics">Аналитика</button>
-        <button class="main-tab-btn" data-main-tab="tabList">Список объектов</button>
-    </div>
 
     <div id="tabAnalytics" class="main-tab-content active">
-        <div class="stats-row" id="totalStats"></div>
-        <div class="zones-row" id="zonesContainer"></div>
-
-        <div class="years-tabs">
-            <button class="year-tab-btn active" data-year-tab="tabOpen">Год открытия</button>
-            <button class="year-tab-btn" data-year-tab="tabInput">Год ввода</button>
+        <div class="stats-row" id="totalStats">
+            <div class="stat-card"><div class="big-number">…</div><div class="label">ЗАГРУЗКА ДАННЫХ</div><div class="detail">подключение к Google Sheets</div></div>
         </div>
-        <div id="tabOpen" class="year-content active"><div class="year-table-wrapper"><table id="openYearTable"><thead><tr><th>Год</th><th>Школы</th><th>Детские сады</th><th>Всего</th></tr></thead><tbody id="openYearBody"><tr><td colspan="4">Загрузка...</td></tr></tbody></table></div></div>
-        <div id="tabInput" class="year-content"><div class="year-table-wrapper"><table id="inputYearTable"><thead><tr><th>Год</th><th>Школы</th><th>Детские сады</th><th>Всего</th></tr></thead><tbody id="inputYearBody"><tr><td colspan="4">Загрузка...</td></tr></tbody></table></div></div>
+
+        <div id="loadMessage" class="summary-note" style="margin:-24px 0 20px 0; color:#64748b;"></div>
+
+        <div class="summary-grid" id="summaryContainer">
+            <section class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <h2>Городские округа</h2>
+                        
+                    </div>
+                    <div class="summary-badge" id="districtsCount">Загрузка...</div>
+                </div>
+                <div class="summary-table-wrapper">
+                    <table class="summary-table">
+                        <tbody id="districtsBody"><tr><td colspan="2">Загрузка...</td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <h2>Застройщики</h2>
+                        
+                    </div>
+                    <div class="summary-badge" id="developersCount">Загрузка...</div>
+                </div>
+                <div class="summary-table-wrapper">
+                    <table class="summary-table">
+                        <tbody id="developersBody"><tr><td colspan="2">Загрузка...</td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
 
         <div id="detailPanel" class="detail-panel" style="display: none;">
             <div class="panel-header"><h3 id="panelTitle">Детализация</h3><button class="close-panel-btn" id="closePanelBtn">×</button></div>
             <div class="panel-content" id="panelContent"></div>
-        </div>
-    </div>
-
-    <div id="tabList" class="main-tab-content">
-        <div class="search-bar">
-            <span>🔍</span>
-            <input type="text" id="objectSearchInput" placeholder="Поиск по наименованию, округу, типу...">
-        </div>
-        <div class="year-table-wrapper">
-            <table id="fullObjectsTable">
-                <thead><tr><th>№</th><th>Тип</th><th>Городской округ</th><th>Наименование объекта</th><th>Мощность</th><th>Зона</th><th>Год ввода</th><th>Открытие</th><th>Презентация</th><th>Детали</th></tr></thead>
-                <tbody id="fullObjectsBody"></tbody>
-            </table>
         </div>
     </div>
 
@@ -260,17 +326,85 @@
 </div>
 
 <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP3m6xKhbU3FbvcZl-pntPYcO7X7PvbTnOjGhS6TgqkqQNYYRYVvTfA8mTdF4gxO5is9b_ZxC-eOw7/pub?output=csv";
-    
+    const CSV_URLS = [
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP3m6xKhbU3FbvcZl-pntPYcO7X7PvbTnOjGhS6TgqkqQNYYRYVvTfA8mTdF4gxO5is9b_ZxC-eOw7/pub?output=csv",
+        "https://docs.google.com/spreadsheets/d/1HOU8WHNM2kgVsMr17Hr-d174Ias-ziwn-fOaqSdMIAo/export?format=csv&gid=0"
+    ];
+
     const COL = {
-        TYPE: 1, CITY: 3, NAME: 4, CAPACITY: 5,
-        DEADLINE: 6, INPUT_YEAR: 7, OPEN_DATE: 8, OPEN_YEAR: 9,
-        COST: 11, NOTE: 15, ZONE: 16,
-        PLAN_LOCAL: 17, FACT_LOCAL: 18, SECOND_SHIFT: 19, PDF: 20
+        // Нумерация с нуля: A=0, B=1, C=2, D=3, E=4.
+        NUMBER: 0,             // A — № из таблицы
+        DISTRICT: 1,           // B — г.о.
+        NAME: 2,               // C — застройка / проект
+        DEVELOPER: 3,          // D — застройщик
+        REVIEW_DATE: 4,        // E — дата прогона
+        CAPACITY: 5,           // F — РНГП школы
+        NEW_RNGP_SCHOOL: 6,    // G — по новому РНГП школы
+        RNGP_GARDEN: 7,        // H — РНГП детские сады
+        NEW_RNGP_GARDEN: 8,    // I — по новому РНГП детские сады
+        DIFF_SCHOOL: 9,        // J — разница школы
+        DIFF_GARDEN: 10,       // K — разница сады
+        DECISION: 11,          // L — решение
+        PARTICIPANTS: 12,      // M — участники от администрации
+        ADMIN_POSITION: 13,    // N — позиция администрации
+        PDF: 14                // O — ссылка на презентацию
     };
-    
+
+    const DEFAULT_HEADERS = [
+        '№', 'г.о.', 'Застройка', 'Застройщик', 'Дата прогона',
+        'РНГП школы', 'По новому РНГП школы', 'РНГП детские сады', 'По новому РНГП детские сады',
+        'Разница Школы', 'Разница Сады', 'Решение', 'Участники от Администрации',
+        'Позиция Администрации', 'Ссылка на презентацию'
+    ];
+
     let allObjects = [];
-    
+    let tableHeaders = DEFAULT_HEADERS.slice();
+
+    function $(id) { return document.getElementById(id); }
+
+    function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, ch => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[ch]));
+    }
+
+    function normalizeText(value, fallback = "Не указано") {
+        const text = (value ?? "").toString().replace(/\uFEFF/g, '').replace(/\s+/g, ' ').trim();
+        return text || fallback;
+    }
+
+    function hasFilledValue(value) {
+        const text = normalizeText(value, '');
+        return text !== '' && text !== '—' && text.toLowerCase() !== 'не указано' && text.toLowerCase() !== 'не указан';
+    }
+
+    function metaLineHtml(label, value) {
+        if (!hasFilledValue(value)) return '';
+        return `<div class="project-meta-line"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</div>`;
+    }
+
+    function firstText(values, fallback = "") {
+        for (const value of values) {
+            const text = normalizeText(value, "");
+            if (text) return text;
+        }
+        return fallback;
+    }
+
+
+    function buildHeaders(headerRow) {
+        const max = Math.max(DEFAULT_HEADERS.length, headerRow ? headerRow.length : 0);
+        const headers = [];
+        for (let i = 0; i < max; i++) {
+            headers.push(normalizeText(headerRow ? headerRow[i] : '', DEFAULT_HEADERS[i] || `Столбец ${i + 1}`));
+        }
+        return headers;
+    }
+
+    function getHeaderLabel(index) {
+        return tableHeaders[index] || DEFAULT_HEADERS[index] || `Столбец ${index + 1}`;
+    }
+
     function declension(num, one, few, many) {
         let n = Math.abs(num) % 100;
         if (n >= 5 && n <= 20) return many;
@@ -279,412 +413,557 @@
         if (n >= 2 && n <= 4) return few;
         return many;
     }
-    
+
     function parseYear(value) {
         if (!value) return null;
-        const num = parseInt(value.toString().trim());
-        if (!isNaN(num) && num >= 2000 && num <= 2100) return num;
-        return null;
+        const match = value.toString().match(/20\d{2}/);
+        if (!match) return null;
+        const num = parseInt(match[0], 10);
+        return (num >= 2000 && num <= 2100) ? num : null;
     }
-    
+
     function cleanOpenDate(date) {
         if (!date) return "";
         return date.toString().replace(/[}?]/g, '').trim();
     }
-    
+
+    function parseReviewDate(value) {
+        const raw = cleanOpenDate(value).replace(/\s+/g, ' ').trim();
+        if (!raw) return null;
+
+        let match = raw.match(/(\d{1,2})[.\/\-](\d{1,2})[.\/\-](20\d{2})/);
+        if (match) {
+            const day = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10);
+            const year = parseInt(match[3], 10);
+            const parsed = new Date(year, month - 1, day);
+            if (parsed.getFullYear() === year && parsed.getMonth() === month - 1 && parsed.getDate() === day) return parsed;
+        }
+
+        match = raw.match(/(20\d{2})[.\/\-](\d{1,2})[.\/\-](\d{1,2})/);
+        if (match) {
+            const year = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10);
+            const day = parseInt(match[3], 10);
+            const parsed = new Date(year, month - 1, day);
+            if (parsed.getFullYear() === year && parsed.getMonth() === month - 1 && parsed.getDate() === day) return parsed;
+        }
+
+        return null;
+    }
+
+    function todayStart() {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function googleDateSerialFromDisplayedDate(value) {
+        const raw = cleanOpenDate(value).replace(/\s+/g, ' ').trim();
+        if (!raw) return null;
+        let match = raw.match(/^(\d{1,2})[.\/\-](\d{1,2})[.\/\-]((?:19|20)\d{2})$/);
+        let day, month, year;
+        if (match) {
+            day = parseInt(match[1], 10);
+            month = parseInt(match[2], 10);
+            year = parseInt(match[3], 10);
+        } else {
+            match = raw.match(/^((?:19|20)\d{2})[.\/\-](\d{1,2})[.\/\-](\d{1,2})$/);
+            if (!match) return null;
+            year = parseInt(match[1], 10);
+            month = parseInt(match[2], 10);
+            day = parseInt(match[3], 10);
+        }
+        const parsed = new Date(year, month - 1, day);
+        if (parsed.getFullYear() !== year || parsed.getMonth() !== month - 1 || parsed.getDate() !== day) return null;
+        const origin = new Date(1899, 11, 30);
+        const diff = Math.round((parsed.getTime() - origin.getTime()) / 86400000);
+        return diff > 0 ? diff : null;
+    }
+
+    function numericGardenFieldDisplay(index, value) {
+        const raw = cleanOpenDate(value).replace(/\s+/g, ' ').trim();
+        if (!raw) return '';
+
+        // В Google Sheets эти две колонки иногда отдаются как даты начала XX века,
+        // хотя фактически это числовые значения. Переводим дату обратно в число.
+        if (index === COL.NEW_RNGP_GARDEN || index === COL.DIFF_GARDEN) {
+            const serial = googleDateSerialFromDisplayedDate(raw);
+            if (serial !== null && /^\d{1,2}[.\/\-]\d{1,2}[.\/\-](?:19|20)\d{2}$/.test(raw)) {
+                return serial.toLocaleString('ru-RU');
+            }
+        }
+
+        const plainNumber = raw.replace(/\s/g, '').replace(',', '.');
+        if (/^-?\d+(\.\d+)?$/.test(plainNumber)) {
+            const num = Number(plainNumber);
+            if (Number.isFinite(num)) return num.toLocaleString('ru-RU');
+        }
+        return raw;
+    }
+
+    function isReviewed(obj) {
+        const date = parseReviewDate(obj.reviewDateRaw);
+        return !!date && date <= todayStart();
+    }
+
     function fixPdfLink(link) {
         if (!link) return "";
-        if (link.includes("drive.google.com")) {
-            if (link.includes("/view")) return link.replace("/view", "/preview");
-            if (link.includes("/edit")) return link.replace("/edit", "/preview");
+        const raw = link.toString().replace(/\u00a0/g, ' ').replace(/[\r\n\t]+/g, ' ').trim();
+        const match = raw.match(/https?:\/\/[^\s"'<>]+/i);
+        let clean = (match ? match[0] : raw).replace(/[),.;]+$/g, '').trim();
+        if (!clean) return "";
+
+        let fileMatch = clean.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
+        if (fileMatch) return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+
+        let openMatch = clean.match(/drive\.google\.com\/(?:open|uc)\?[^#]*id=([^&#]+)/i);
+        if (openMatch) return `https://drive.google.com/file/d/${openMatch[1]}/preview`;
+
+        let presentationMatch = clean.match(/docs\.google\.com\/presentation\/d\/([^/]+)/i);
+        if (presentationMatch) return `https://docs.google.com/presentation/d/${presentationMatch[1]}/preview`;
+
+        if (clean.includes("drive.google.com")) {
+            if (clean.includes("/view")) return clean.replace("/view", "/preview");
+            if (clean.includes("/edit")) return clean.replace("/edit", "/preview");
         }
-        return link;
+        return clean;
     }
-    
+
+    function reviewDateDisplay(obj) {
+        const raw = cleanOpenDate(obj && obj.reviewDateRaw ? obj.reviewDateRaw : '');
+        return raw || 'Не рассмотрено';
+    }
+
+    function parseCsv(text) {
+        const rows = [];
+        let row = [];
+        let current = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i];
+            const next = text[i + 1];
+
+            if (ch === '"') {
+                if (inQuotes && next === '"') {
+                    current += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (ch === ',' && !inQuotes) {
+                row.push(current);
+                current = "";
+            } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+                if (ch === '\r' && next === '\n') i++;
+                row.push(current);
+                if (row.some(cell => normalizeText(cell, "") !== "")) rows.push(row);
+                row = [];
+                current = "";
+            } else {
+                current += ch;
+            }
+        }
+
+        row.push(current);
+        if (row.some(cell => normalizeText(cell, "") !== "")) rows.push(row);
+        return rows;
+    }
+
+    function inferType(row, name) {
+        const text = row.concat([name]).join(' ').toLowerCase();
+        const isGarden = text.includes('детский сад') || text.includes('доу') || text.includes('дошколь') || text.includes('сад на') || text.includes('сада');
+        const isSchool = text.includes('школ') || text.includes('сош') || text.includes('общеобразователь');
+        if (isSchool && !isGarden) return { type: 'Школа', isSchool: true, isGarden: false };
+        if (isGarden && !isSchool) return { type: 'Детский сад', isSchool: false, isGarden: true };
+        if (isSchool && isGarden) return { type: 'Школа/сад', isSchool: true, isGarden: true };
+        return { type: 'Другое', isSchool: false, isGarden: false };
+    }
+
+    function parseCapacity(value) {
+        const raw = normalizeText(value, "");
+        if (!raw) return 0;
+        const num = parseInt(raw.replace(/\s/g, '').replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
+    }
+
+    function isHeaderOrEmpty(row, rowIndex) {
+        if (!row || !row.some(cell => normalizeText(cell, "") !== "")) return true;
+        if (rowIndex === 0) return true;
+        const b = normalizeText(row[COL.DISTRICT], "").toLowerCase();
+        const c = normalizeText(row[COL.DEVELOPER], "").toLowerCase();
+        return ((b === 'городской округ' || b === 'городской округ (г.о.)' || b === 'округ') && (rowIndex <= 2)) || ((c === 'застройщик' || c === 'застройщики') && (rowIndex <= 2));
+    }
+
+    function setLoadMessage(message, isError = false) {
+        const el = $('loadMessage');
+        if (!el) return;
+        el.textContent = message || '';
+        el.style.color = isError ? '#b91c1c' : '#64748b';
+    }
+
+    async function fetchCsvText() {
+        let lastError = null;
+        for (const baseUrl of CSV_URLS) {
+            const url = baseUrl + (baseUrl.includes('?') ? '&' : '?') + '_=' + Date.now();
+            try {
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const text = await response.text();
+                if (text && text.trim()) return text;
+                throw new Error('Пустой ответ Google Sheets');
+            } catch (err) {
+                lastError = err;
+                console.warn('CSV load failed:', err);
+            }
+        }
+        throw lastError || new Error('Не удалось загрузить CSV');
+    }
+
+    function loadRowsViaGviz() {
+        return new Promise((resolve, reject) => {
+            if (!document.body) {
+                reject(new Error('Страница еще не готова для резервной загрузки'));
+                return;
+            }
+
+            const callbackName = '__sheetCallback_' + Date.now();
+            const script = document.createElement('script');
+            const timer = setTimeout(() => {
+                cleanup();
+                reject(new Error('Превышено время ожидания Google Sheets'));
+            }, 15000);
+
+            function cleanup() {
+                clearTimeout(timer);
+                if (script.parentNode) script.parentNode.removeChild(script);
+                try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+            }
+
+            window[callbackName] = (data) => {
+                try {
+                    const cols = (data.table && data.table.cols ? data.table.cols : []).map(col => col.label || col.id || '');
+                    const rows = [cols];
+                    (data.table && data.table.rows ? data.table.rows : []).forEach(row => {
+                        rows.push((row.c || []).map(cell => {
+                            if (!cell) return '';
+                            if (cell.f !== undefined && cell.f !== null) return cell.f;
+                            if (cell.v !== undefined && cell.v !== null) return cell.v;
+                            return '';
+                        }));
+                    });
+                    cleanup();
+                    resolve(rows);
+                } catch (err) {
+                    cleanup();
+                    reject(err);
+                }
+            };
+
+            script.onerror = () => {
+                cleanup();
+                reject(new Error('Резервная загрузка Google Sheets недоступна'));
+            };
+            script.src = 'https://docs.google.com/spreadsheets/d/1HOU8WHNM2kgVsMr17Hr-d174Ias-ziwn-fOaqSdMIAo/gviz/tq?gid=0&tqx=out:json;responseHandler:' + callbackName + '&_=' + Date.now();
+            document.body.appendChild(script);
+        });
+    }
+
+    async function loadRows() {
+        try {
+            const text = await fetchCsvText();
+            return parseCsv(text);
+        } catch (fetchErr) {
+            console.warn('Основная CSV-загрузка не сработала, пробую резервный способ:', fetchErr);
+            return await loadRowsViaGviz();
+        }
+    }
+
     async function loadData() {
         try {
-            const response = await fetch(CSV_URL);
-            const text = await response.text();
-            const rows = [];
-            const lines = text.split(/\r?\n/);
-            for (let line of lines) {
-                if (line.trim() === "") continue;
-                const cells = [];
-                let current = "", inQuote = false;
-                for (let i = 0; i < line.length; i++) {
-                    const ch = line[i];
-                    if (ch === '"') inQuote = !inQuote;
-                    else if (ch === ',' && !inQuote) {
-                        cells.push(current);
-                        current = "";
-                    } else current += ch;
-                }
-                cells.push(current);
-                rows.push(cells.map(c => c.replace(/^"|"$/g, '')));
-            }
-            if (rows.length < 2) return;
-            const dataRows = rows.slice(1);
-            
+            setLoadMessage('Загружаю данные из Google Sheets...');
+            const rows = await loadRows();
+            tableHeaders = buildHeaders(rows[0] || []);
+
             allObjects = [];
-            for (let row of dataRows) {
-                const name = row[COL.NAME] ? row[COL.NAME].trim() : "";
-                if (name === "") continue;
-                
-                const typeRaw = row[COL.TYPE] ? row[COL.TYPE].trim() : "";
-                const isSchool = typeRaw.toLowerCase().includes("школ");
-                const isGarden = typeRaw.toLowerCase().includes("сад") || typeRaw.toLowerCase().includes("детский сад");
-                const type = isSchool ? "Школа" : (isGarden ? "Детский сад" : "Другое");
-                
-                let capacity = 0;
-                const capRaw = row[COL.CAPACITY] ? row[COL.CAPACITY].toString().trim() : "";
-                if (capRaw) {
-                    const num = parseInt(capRaw.replace(/\s/g, '').replace(/[^0-9]/g, ''));
-                    if (!isNaN(num)) capacity = num;
-                }
-                
-                const zoneRaw = row[COL.ZONE] ? row[COL.ZONE].trim() : "";
-                let zone = "";
-                if (zoneRaw.toLowerCase().includes("зелен")) zone = "Зеленая";
-                else if (zoneRaw.toLowerCase().includes("желт")) zone = "Желтая";
-                else if (zoneRaw.toLowerCase().includes("красн")) zone = "Красная";
-                
+            rows.forEach((row, rowIndex) => {
+                if (isHeaderOrEmpty(row, rowIndex)) return;
+
+                const district = normalizeText(row[COL.DISTRICT], 'Не указан');
+                const developer = normalizeText(row[COL.DEVELOPER], 'Не указан');
+                const name = firstText([row[COL.NAME], row[2], row[0], developer], 'Без наименования');
+                const typeInfo = inferType(row, name);
+
                 allObjects.push({
-                    type, isSchool, isGarden,
-                    city: row[COL.CITY] || "",
+                    type: typeInfo.type,
+                    isSchool: typeInfo.isSchool,
+                    isGarden: typeInfo.isGarden,
+                    city: district,
+                    developer: developer,
                     name: name,
-                    capacity: capacity,
-                    deadline: row[COL.DEADLINE] || "",
-                    inputYear: parseYear(row[COL.INPUT_YEAR]),
-                    openDate: cleanOpenDate(row[COL.OPEN_DATE]),
-                    openYear: parseYear(row[COL.OPEN_YEAR]),
-                    cost: row[COL.COST] || "",
-                    planLocal: row[COL.PLAN_LOCAL] || "",
-                    factLocal: row[COL.FACT_LOCAL] || "",
-                    secondShift: row[COL.SECOND_SHIFT] || "",
-                    pdfLink: fixPdfLink(row[COL.PDF] || ""),
-                    zone: zone,
-                    note: row[COL.NOTE] || ""
+                    capacity: parseCapacity(row[COL.CAPACITY]),
+                    reviewDateRaw: row[COL.REVIEW_DATE] || '',
+                    adminPosition: row[COL.ADMIN_POSITION] || '',
+                    decision: row[COL.DECISION] || '',
+                    participants: row[COL.PARTICIPANTS] || '',
+                    pdfLink: fixPdfLink(row[COL.PDF] || ''),
+                    originalRow: row.slice(),
+                    sourceNumber: row[COL.NUMBER] || ''
                 });
-            }
-            
+            });
+
             renderTotalStats();
-            renderZoneCards();
-            renderYearTables();
-            renderFullObjectsList();
-            
+            renderDistrictDeveloperTables();
+            showDetailPanel(allObjects, 'Список проектов', false);
+            setLoadMessage(`Данные загружены: ${allObjects.length} ${declension(allObjects.length, 'проект', 'проекта', 'проектов')}.`);
         } catch (err) {
             console.error(err);
+            renderLoadError(err);
         }
     }
-    
+
+    function renderLoadError(err) {
+        setLoadMessage('Не удалось загрузить данные из Google Sheets. Проверьте публикацию таблицы в CSV или доступ к интернету.', true);
+        $('totalStats').innerHTML = `<div class="stat-card"><div class="big-number">!</div><div class="label">ДАННЫЕ НЕ ЗАГРУЖЕНЫ</div><div class="detail">${escapeHtml(err && err.message ? err.message : 'Ошибка загрузки')}</div></div>`;
+        $('districtsBody').innerHTML = '<tr><td colspan="2">Данные не загружены</td></tr>';
+        $('developersBody').innerHTML = '<tr><td colspan="2">Данные не загружены</td></tr>';
+        $('districtsCount').textContent = '—';
+        $('developersCount').textContent = '—';
+    }
+
     function renderTotalStats() {
         const total = allObjects.length;
         const seats = allObjects.reduce((s, o) => s + o.capacity, 0);
-        const schools = allObjects.filter(o => o.isSchool).length;
-        const schoolsSeats = allObjects.filter(o => o.isSchool).reduce((s, o) => s + o.capacity, 0);
-        const gardens = allObjects.filter(o => o.isGarden).length;
-        const gardensSeats = allObjects.filter(o => o.isGarden).reduce((s, o) => s + o.capacity, 0);
-        
-        document.getElementById("totalStats").innerHTML = `
-            <div class="stat-card" data-filter="all"><div class="big-number">${total}</div><div class="label">ВСЕГО ОБЪЕКТОВ</div><div class="detail">на ${seats.toLocaleString()} мест</div></div>
-            <div class="stat-card" data-filter="schools"><div class="big-number">${schools}</div><div class="label">ШКОЛЫ</div><div class="detail">${schoolsSeats.toLocaleString()} мест</div></div>
-            <div class="stat-card" data-filter="gardens"><div class="big-number">${gardens}</div><div class="label">ДЕТСКИЕ САДЫ</div><div class="detail">${gardensSeats.toLocaleString()} мест</div></div>
+        const reviewed = allObjects.filter(o => isReviewed(o));
+        const notReviewed = allObjects.filter(o => !isReviewed(o));
+
+        $('totalStats').innerHTML = `
+            <div class="stat-card" data-filter="all"><div class="big-number">${total}</div><div class="label">ВСЕГО ПРОЕКТОВ</div></div>
+            <div class="stat-card" data-filter="reviewed"><div class="big-number">${reviewed.length}</div><div class="label">РАССМОТРЕНЫ</div></div>
+            <div class="stat-card" data-filter="not-reviewed"><div class="big-number">${notReviewed.length}</div><div class="label">НЕ РАССМОТРЕНЫ</div></div>
         `;
-        
-        document.querySelectorAll('.stat-card').forEach(card => {
+
+        document.querySelectorAll('.stat-card[data-filter]').forEach(card => {
             card.addEventListener('click', () => {
                 const filter = card.getAttribute('data-filter');
+                clearSummaryHighlight();
                 let filtered = allObjects;
-                let title = "Все объекты";
-                if (filter === "schools") { filtered = allObjects.filter(o => o.isSchool); title = "Школы"; }
-                if (filter === "gardens") { filtered = allObjects.filter(o => o.isGarden); title = "Детские сады"; }
+                let title = 'Все проекты';
+                if (filter === 'reviewed') { filtered = allObjects.filter(o => isReviewed(o)); title = 'Рассмотрены'; }
+                if (filter === 'not-reviewed') { filtered = allObjects.filter(o => !isReviewed(o)); title = 'Не рассмотрены'; }
                 showDetailPanel(filtered, title);
             });
         });
     }
-    
-    function renderZoneCards() {
-        const zones = { Зеленая: [], Желтая: [], Красная: [] };
-        allObjects.forEach(o => { if (zones[o.zone]) zones[o.zone].push(o); });
-        const colors = { Зеленая: "green", Желтая: "yellow", Красная: "red" };
-        const subtitles = { Зеленая: "можно перенести", Желтая: "социальная напряженность", Красная: "нельзя переносить" };
-        
-        let html = "";
-        for (let [zoneName, items] of Object.entries(zones)) {
-            const total = items.length;
-            const seats = items.reduce((s, o) => s + o.capacity, 0);
-            const schools = items.filter(o => o.isSchool);
-            const gardens = items.filter(o => o.isGarden);
-            
-            html += `<div class="zone-card ${colors[zoneName]}">
-                <div class="zone-title">${zoneName}</div>
-                <div class="zone-subtitle">${subtitles[zoneName]}</div>
-                <div class="total-stats" data-zone="${zoneName}" data-type="all">
-                    <span class="total-number">${total}</span>
-                    <span class="total-label">${declension(total, 'объект', 'объекта', 'объектов')}</span>
-                    <span class="total-number" style="margin-left:16px;">${seats.toLocaleString()}</span>
-                    <span class="total-label">мест</span>
-                </div>
-                <div class="split-stats">
-                    <div class="split-item" data-zone="${zoneName}" data-type="schools">
-                        <div class="label">Школы</div>
-                        <div class="number">${schools.length}</div>
-                        <div class="seats">${schools.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</div>
-                    </div>
-                    <div class="split-item" data-zone="${zoneName}" data-type="gardens">
-                        <div class="label">Сады</div>
-                        <div class="number">${gardens.length}</div>
-                        <div class="seats">${gardens.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</div>
-                    </div>
-                </div>
-            </div>`;
-        }
-        document.getElementById("zonesContainer").innerHTML = html;
-        
-        document.querySelectorAll('.total-stats').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const zone = el.getAttribute('data-zone');
-                const filtered = allObjects.filter(o => o.zone === zone);
-                showDetailPanel(filtered, `${zone} зона — все объекты`);
-            });
+
+    function makeGroups(keyGetter) {
+        const map = new Map();
+        allObjects.forEach(obj => {
+            const key = normalizeText(keyGetter(obj), 'Не указан');
+            if (!map.has(key)) map.set(key, []);
+            map.get(key).push(obj);
         });
-        
-        document.querySelectorAll('.split-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const zone = item.getAttribute('data-zone');
-                const type = item.getAttribute('data-type');
-                let filtered = allObjects.filter(o => o.zone === zone);
-                if (type === "schools") filtered = filtered.filter(o => o.isSchool);
-                if (type === "gardens") filtered = filtered.filter(o => o.isGarden);
-                const title = `${zone} зона — ${type === "schools" ? "Школы" : "Детские сады"}`;
-                showDetailPanel(filtered, title);
+        return map;
+    }
+
+    function renderDistrictDeveloperTables() {
+        const collator = new Intl.Collator('ru', { sensitivity: 'base' });
+        const districts = Array.from(makeGroups(o => o.city).entries()).sort((a, b) => collator.compare(a[0], b[0]));
+        const developers = Array.from(makeGroups(o => o.developer).entries()).sort((a, b) => b[1].length - a[1].length || collator.compare(a[0], b[0]));
+
+        $('districtsCount').textContent = `${districts.length} ${declension(districts.length, 'округ', 'округа', 'округов')}`;
+        $('developersCount').textContent = `${developers.length} ${declension(developers.length, 'застройщик', 'застройщика', 'застройщиков')}`;
+
+        $('districtsBody').innerHTML = districts.map(([district, items]) => groupRowHtml('district', district, items)).join('') || '<tr><td colspan="2">Нет данных</td></tr>';
+        $('developersBody').innerHTML = developers.map(([developer, items]) => groupRowHtml('developer', developer, items)).join('') || '<tr><td colspan="2">Нет данных</td></tr>';
+
+        bindSummaryRows();
+    }
+
+    function getRelatedKeys(kind, key) {
+        const related = new Set();
+        if (kind === 'district') {
+            allObjects.forEach(o => {
+                if (normalizeText(o.city, 'Не указан') === key) related.add(normalizeText(o.developer, 'Не указан'));
             });
+        }
+        if (kind === 'developer') {
+            allObjects.forEach(o => {
+                if (normalizeText(o.developer, 'Не указан') === key) related.add(normalizeText(o.city, 'Не указан'));
+            });
+        }
+        return related;
+    }
+
+    function clearSummaryHighlight() {
+        document.querySelectorAll('[data-summary]').forEach(row => {
+            row.classList.remove('summary-active', 'summary-related', 'summary-muted');
         });
     }
-    
-    function renderYearTables() {
-        const openYears = new Map(), inputYears = new Map();
-        for (let obj of allObjects) {
-            if (obj.openYear) { if (!openYears.has(obj.openYear)) openYears.set(obj.openYear, []); openYears.get(obj.openYear).push(obj); }
-            if (obj.inputYear) { if (!inputYears.has(obj.inputYear)) inputYears.set(obj.inputYear, []); inputYears.get(obj.inputYear).push(obj); }
-        }
-        
-        const sortedOpen = Array.from(openYears.keys()).sort((a,b)=>a-b);
-        const sortedInput = Array.from(inputYears.keys()).sort((a,b)=>a-b);
-        let openHtml = "", inputHtml = "";
-        
-        for (let year of sortedOpen) {
-            const items = openYears.get(year);
-            const schools = items.filter(o => o.isSchool);
-            const gardens = items.filter(o => o.isGarden);
-            openHtml += `<tr>
-                <td class="clickable-cell" data-year="${year}" data-type="all" data-tab="open"><strong>${year}</strong></td>
-                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="schools" data-tab="open"><strong>${schools.length}</strong> ${declension(schools.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${schools.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
-                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="gardens" data-tab="open"><strong>${gardens.length}</strong> ${declension(gardens.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${gardens.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
-                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="all" data-tab="open"><strong>${items.length}</strong> ${declension(items.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${items.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
-            </tr>`;
-        }
-        
-        for (let year of sortedInput) {
-            const items = inputYears.get(year);
-            const schools = items.filter(o => o.isSchool);
-            const gardens = items.filter(o => o.isGarden);
-            inputHtml += `<tr>
-                <td class="clickable-cell" data-year="${year}" data-type="all" data-tab="input"><strong>${year}</strong></td>
-                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="schools" data-tab="input"><strong>${schools.length}</strong> ${declension(schools.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${schools.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
-                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="gardens" data-tab="input"><strong>${gardens.length}</strong> ${declension(gardens.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${gardens.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
-                <td><div class="group-cell"><span class="clickable-cell" data-year="${year}" data-type="all" data-tab="input"><strong>${items.length}</strong> ${declension(items.length, 'объект', 'объекта', 'объектов')}<br><span class="sub">${items.reduce((s,o)=>s+o.capacity,0).toLocaleString()} мест</span></span></div></td>
-            </tr>`;
-        }
-        
-        document.getElementById("openYearBody").innerHTML = openHtml || '<tr><td colspan="4">Нет данных</td></tr>';
-        document.getElementById("inputYearBody").innerHTML = inputHtml || '<tr><td colspan="4">Нет данных</td></tr>';
-        
-        document.querySelectorAll('.clickable-cell').forEach(cell => {
-            cell.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const year = parseInt(cell.getAttribute('data-year'));
-                const type = cell.getAttribute('data-type');
-                const tab = cell.getAttribute('data-tab');
-                let filtered = allObjects.filter(o => (tab === "open" ? o.openYear === year : o.inputYear === year));
-                if (type === "schools") filtered = filtered.filter(o => o.isSchool);
-                if (type === "gardens") filtered = filtered.filter(o => o.isGarden);
-                const title = `${tab === "open" ? "Год открытия" : "Год ввода"} ${year} — ${type === "schools" ? "Школы" : (type === "gardens" ? "Детские сады" : "Все объекты")}`;
-                showDetailPanel(filtered, title);
-            });
-        });
-    }
-    
-    function renderFullObjectsList() {
-        const tbody = document.getElementById("fullObjectsBody");
-        const searchInput = document.getElementById("objectSearchInput");
-        
-        function filterAndRender() {
-            const searchTerm = searchInput.value.toLowerCase();
-            let filtered = allObjects;
-            if (searchTerm) {
-                filtered = allObjects.filter(obj => 
-                    obj.name.toLowerCase().includes(searchTerm) ||
-                    obj.city.toLowerCase().includes(searchTerm) ||
-                    obj.type.toLowerCase().includes(searchTerm)
-                );
+
+    function applyCrossHighlight(kind, key) {
+        const oppositeKind = kind === 'district' ? 'developer' : 'district';
+        const related = getRelatedKeys(kind, key);
+
+        document.querySelectorAll('[data-summary]').forEach(row => {
+            const rowKind = row.getAttribute('data-summary');
+            const rowKey = decodeURIComponent(row.getAttribute('data-key'));
+            row.classList.remove('summary-active', 'summary-related', 'summary-muted');
+
+            if (rowKind === kind && rowKey === key) {
+                row.classList.add('summary-active');
+            } else if (rowKind === oppositeKind && related.has(rowKey)) {
+                row.classList.add('summary-related');
+            } else {
+                row.classList.add('summary-muted');
             }
-            
-            let html = "";
-            filtered.forEach((obj, idx) => {
-                const hasPdf = obj.pdfLink && obj.pdfLink !== "";
-                html += `<tr>
-                    <td>${idx+1}</td>
-                    <td>${obj.type}</td>
-                    <td>${obj.city}</td>
-                    <td><strong>${obj.name.substring(0, 80)}${obj.name.length > 80 ? "…" : ""}</strong></td>
-                    <td>${obj.capacity.toLocaleString()}</td>
-                    <td>${obj.zone || "—"}</td>
-                    <td>${obj.inputYear || "—"}</td>
-                    <td>${obj.openDate || "—"}</td>
-                    <td>${hasPdf ? `<button class="btn-pdf" data-pdf="${obj.pdfLink}">Открыть</button>` : "Отсутствует"}</td>
-                    <td><button class="btn-detail" data-obj='${JSON.stringify(obj)}'>Подробнее</button></td>
-                </tr>`;
-            });
-            if (filtered.length === 0) html = `<tr><td colspan="10" style="text-align:center;">Ничего не найдено</td></tr>`;
-            tbody.innerHTML = html;
-            
-            document.querySelectorAll('#fullObjectsBody .btn-pdf').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const url = btn.getAttribute('data-pdf');
-                    if (url) { document.getElementById("pdfFrame").src = url; document.getElementById("pdfModal").style.display = "flex"; }
-                });
-            });
-            document.querySelectorAll('#fullObjectsBody .btn-detail').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const obj = JSON.parse(btn.getAttribute('data-obj'));
-                    openSidePanel(obj);
-                });
-            });
-        }
-        
-        filterAndRender();
-        searchInput.addEventListener('input', filterAndRender);
+        });
     }
-    
-    function showDetailPanel(items, title) {
-        const panel = document.getElementById("detailPanel");
-        document.getElementById("panelTitle").innerHTML = `${title} — ${items.length} ${declension(items.length, 'объект', 'объекта', 'объектов')}`;
-        
-        let html = `<table style="width:100%; border-collapse:collapse;"><thead><tr><th>№</th><th>Тип</th><th>Округ</th><th>Наименование</th><th>Мощность</th><th>Год ввода</th><th>Открытие</th><th>План в локации</th><th>Факт в локации</th><th>2-я смена / очередность 3-7</th><th>Презентация</th><th>Детали</th></tr></thead><tbody>`;
-        
-        items.forEach((obj, idx) => {
-            const hasPdf = obj.pdfLink && obj.pdfLink !== "";
-            html += `<tr>
-                <td>${idx+1}</td>
-                <td>${obj.type}</td>
-                <td>${obj.city}</td>
-                <td><strong>${obj.name.substring(0, 60)}</strong></td>
-                <td>${obj.capacity.toLocaleString()}</td>
-                <td>${obj.inputYear || "—"}</td>
-                <td>${obj.openDate || "—"}</td>
-                <td>${obj.planLocal || "—"}</td>
-                <td>${obj.factLocal || "—"}</td>
-                <td>${obj.secondShift || "—"}</td>
-                <td>${hasPdf ? `<button class="btn-pdf" data-pdf="${obj.pdfLink}">Открыть</button>` : "Отсутствует"}</td>
-                <td><button class="btn-detail" data-obj='${JSON.stringify(obj)}'>Подробнее</button></td>
+
+    function bindSummaryRows() {
+        document.querySelectorAll('[data-summary="district"]').forEach(row => {
+            row.addEventListener('click', () => {
+                const key = decodeURIComponent(row.getAttribute('data-key'));
+                applyCrossHighlight('district', key);
+                showDetailPanel(allObjects.filter(o => normalizeText(o.city, 'Не указан') === key), `Городской округ: ${key}`);
+            });
+        });
+
+        document.querySelectorAll('[data-summary="developer"]').forEach(row => {
+            row.addEventListener('click', () => {
+                const key = decodeURIComponent(row.getAttribute('data-key'));
+                applyCrossHighlight('developer', key);
+                showDetailPanel(allObjects.filter(o => normalizeText(o.developer, 'Не указан') === key), `Застройщик: ${key}`);
+            });
+        });
+    }
+
+    function groupRowHtml(kind, title, items) {
+        return `<tr data-summary="${kind}" data-key="${encodeURIComponent(title)}">
+            <td>${escapeHtml(title)}</td>
+            <td><strong>${items.length}</strong></td>
+        </tr>`;
+    }
+
+    function showDetailPanel(items, title, shouldScroll = true) {
+        const panel = $('detailPanel');
+        $('panelTitle').innerHTML = `${escapeHtml(title)} — ${items.length} ${declension(items.length, 'проект', 'проекта', 'проектов')}`;
+
+        const rows = items.map((obj, idx) => {
+            const sourceIndex = allObjects.indexOf(obj);
+            const hasPdf = obj.pdfLink && obj.pdfLink !== '';
+            const statusClass = isReviewed(obj) ? 'reviewed' : 'not-reviewed';
+            const statusText = isReviewed(obj) ? 'Рассмотрено' : 'Не рассмотрено';
+            return `<tr>
+                <td class="project-index">${idx + 1}</td>
+                <td>${escapeHtml(obj.city || '—')}</td>
+                <td>${escapeHtml(obj.developer || '—')}</td>
+                <td><div class="project-name">${escapeHtml(obj.name || '—')}</div></td>
+                <td>${escapeHtml(reviewDateDisplay(obj))}</td>
+                <td>${escapeHtml(obj.adminPosition || '—')}</td>
+                <td>${hasPdf ? `<button class="btn-link" data-index="${sourceIndex}">Открыть</button>` : '—'}</td>
+                <td><button class="btn-more" data-index="${sourceIndex}">Подробнее</button></td>
             </tr>`;
-        });
-        html += `</tbody></table>`;
-        document.getElementById("panelContent").innerHTML = html;
-        panel.style.display = "block";
-        panel.scrollIntoView({ behavior: "smooth" });
-        
-        document.querySelectorAll('#panelContent .btn-pdf').forEach(btn => {
+        }).join('');
+
+        $('panelContent').innerHTML = `<div class="project-table-wrapper"><table class="project-table"><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Ссылка на презентацию</th><th>Дополнительно</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Нет данных</td></tr>'}</tbody></table></div>`;
+        panel.style.display = 'block';
+        if (shouldScroll) panel.scrollIntoView({ behavior: 'smooth' });
+
+        document.querySelectorAll('#panelContent .btn-link').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const url = btn.getAttribute('data-pdf');
-                if (url) { document.getElementById("pdfFrame").src = url; document.getElementById("pdfModal").style.display = "flex"; }
+                const obj = allObjects[parseInt(btn.getAttribute('data-index'), 10)];
+                if (obj && obj.pdfLink) openPdf(obj.pdfLink);
             });
         });
-        document.querySelectorAll('#panelContent .btn-detail').forEach(btn => {
+
+        document.querySelectorAll('#panelContent .btn-more').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const obj = JSON.parse(btn.getAttribute('data-obj'));
-                openSidePanel(obj);
+                const obj = allObjects[parseInt(btn.getAttribute('data-index'), 10)];
+                if (obj) openSidePanel(obj);
             });
         });
     }
-    
+
+    function openPdf(url) {
+        const safeUrl = fixPdfLink(url);
+        if (!safeUrl) return;
+        $('pdfFrame').src = safeUrl;
+        $('pdfModal').style.display = 'flex';
+    }
+
+    function buildAllFieldsRows(obj) {
+        const originalRow = obj.originalRow || [];
+        const max = Math.max(tableHeaders.length, DEFAULT_HEADERS.length, originalRow.length);
+        let rows = '';
+
+        for (let i = 0; i < max; i++) {
+            const label = getHeaderLabel(i);
+            const rawValue = originalRow[i];
+            const isPresentation = i === COL.PDF && obj.pdfLink;
+
+            if (!hasFilledValue(rawValue) && !isPresentation) continue;
+
+            let displayValue = rawValue;
+            if (i === COL.NEW_RNGP_GARDEN || i === COL.DIFF_GARDEN) displayValue = numericGardenFieldDisplay(i, rawValue);
+
+            if (!hasFilledValue(displayValue) && !isPresentation) continue;
+
+            let valueHtml = escapeHtml(displayValue);
+            if (isPresentation) {
+                valueHtml = `<button class="btn-link" id="sidePdfBtn">Открыть презентацию</button>`;
+            }
+
+            rows += `<tr><td>${escapeHtml(label)}</td><td>${valueHtml}</td></tr>`;
+        }
+        return rows || '<tr><td colspan="2">Нет заполненных данных</td></tr>';
+    }
+
     function openSidePanel(obj) {
-        const hasPdf = obj.pdfLink && obj.pdfLink !== "";
-        document.getElementById("sidePanelTitle").innerHTML = `Карточка объекта: ${obj.name.substring(0, 50)}`;
-        document.getElementById("sidePanelContent").innerHTML = `
-            <table class="detail-table">
-                <tr><td style="font-weight:600;">Тип</td><td><strong>${obj.type}</strong></td></tr>
-                <tr><td style="font-weight:600;">Городской округ</td><td>${obj.city || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Наименование</td><td>${obj.name}</td></tr>
-                <tr><td style="font-weight:600;">Мощность</td><td>${obj.capacity.toLocaleString()} мест</td></tr>
-                <tr><td style="font-weight:600;">Зона</td><td>${obj.zone || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Сроки реализации</td><td>${obj.deadline || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Стоимость, тыс. руб.</td><td>${obj.cost || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Год ввода</td><td>${obj.inputYear || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Открытие</td><td>${obj.openDate || "—"}</td></tr>
-                <tr><td style="font-weight:600;">План в локации</td><td>${obj.planLocal || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Факт в локации</td><td>${obj.factLocal || "—"}</td></tr>
-                <tr><td style="font-weight:600;">2-я смена / очередность 3-7</td><td>${obj.secondShift || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Примечание</td><td>${obj.note || "—"}</td></tr>
-                <tr><td style="font-weight:600;">Презентация</td><td>${hasPdf ? `<button class="btn-pdf" data-pdf="${obj.pdfLink}">Открыть</button>` : "Отсутствует"}</td></tr>
-            </table>
+        const hasPdf = obj.pdfLink && obj.pdfLink !== '';
+        const statusClass = isReviewed(obj) ? 'reviewed' : 'not-reviewed';
+        const statusText = isReviewed(obj) ? 'Рассмотрено' : 'Не рассмотрено';
+
+        $('sidePanelTitle').innerHTML = `Все данные по проекту`;
+        $('sidePanelContent').innerHTML = `
+            <div class="project-meta">
+                <div class="project-meta-title">${escapeHtml(hasFilledValue(obj.name) ? obj.name : 'Проект')}</div>
+                ${metaLineHtml('г.о.', obj.city)}
+                ${metaLineHtml('Застройщик', obj.developer)}
+                ${metaLineHtml('Дата прогона', obj.reviewDateRaw ? reviewDateDisplay(obj) : '')}
+                ${metaLineHtml('Позиция администрации', obj.adminPosition)}
+                ${hasPdf ? `<div><button class="btn-link" id="sideTopPdfBtn">Открыть презентацию</button></div>` : ''}
+            </div>
+            <div class="all-fields-title">Все заполненные поля из Google-таблицы</div>
+            <table class="detail-table">${buildAllFieldsRows(obj)}</table>
         `;
-        document.getElementById("sidePanel").classList.add("open");
-        document.getElementById("overlay").classList.add("active");
-        
-        document.querySelectorAll('#sidePanelContent .btn-pdf').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const url = btn.getAttribute('data-pdf');
-                if (url) { document.getElementById("pdfFrame").src = url; document.getElementById("pdfModal").style.display = "flex"; }
-            });
-        });
+        $('sidePanel').classList.add('open');
+        $('overlay').classList.add('active');
+
+        const pdfBtn = $('sidePdfBtn');
+        const topPdfBtn = $('sideTopPdfBtn');
+        if (pdfBtn) pdfBtn.addEventListener('click', () => openPdf(obj.pdfLink));
+        if (topPdfBtn) topPdfBtn.addEventListener('click', () => openPdf(obj.pdfLink));
     }
-    
-    document.getElementById("closePanelBtn").addEventListener("click", () => {
-        document.getElementById("detailPanel").style.display = "none";
+
+    function closeSidePanel() {
+        $('sidePanel').classList.remove('open');
+        $('overlay').classList.remove('active');
+    }
+
+    $('closePanelBtn').addEventListener('click', () => { $('detailPanel').style.display = 'none'; });
+    $('modalClose').addEventListener('click', () => { $('pdfModal').style.display = 'none'; $('pdfFrame').src = ''; });
+    $('sidePanelClose').addEventListener('click', closeSidePanel);
+    $('overlay').addEventListener('click', closeSidePanel);
+    window.addEventListener('click', (e) => {
+        if (e.target === $('pdfModal')) {
+            $('pdfModal').style.display = 'none';
+            $('pdfFrame').src = '';
+        }
     });
-    document.getElementById("modalClose").addEventListener("click", () => {
-        document.getElementById("pdfModal").style.display = "none";
-        document.getElementById("pdfFrame").src = "";
-    });
-    window.onclick = (e) => { if (e.target === document.getElementById("pdfModal")) { document.getElementById("pdfModal").style.display = "none"; document.getElementById("pdfFrame").src = ""; } };
-    
-    document.getElementById("sidePanelClose").addEventListener("click", () => {
-        document.getElementById("sidePanel").classList.remove("open");
-        document.getElementById("overlay").classList.remove("active");
-    });
-    document.getElementById("overlay").addEventListener("click", () => {
-        document.getElementById("sidePanel").classList.remove("open");
-        document.getElementById("overlay").classList.remove("active");
-    });
-    
-    document.querySelectorAll('.year-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabId = btn.getAttribute('data-year-tab');
-            document.querySelectorAll('.year-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.querySelectorAll('.year-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
-    });
-    
-    document.querySelectorAll('.main-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabId = btn.getAttribute('data-main-tab');
-            document.querySelectorAll('.main-tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
-    });
-    
+
     loadData();
     setInterval(loadData, 300000);
 </script>
