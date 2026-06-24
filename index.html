@@ -192,38 +192,42 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.20);
+            background: rgba(15, 23, 42, 0.38);
             z-index: 1100;
             justify-content: center;
             align-items: center;
-            padding: 0;
+            padding: 22px;
         }
         .modal-content {
-            background: #0f172a;
-            border-radius: 0;
-            width: 100vw;
-            height: 100vh;
+            background: #ffffff;
+            border-radius: 24px;
+            width: min(96vw, 1680px);
+            height: min(92vh, 980px);
             position: relative;
             overflow: hidden;
-            box-shadow: none;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(226, 232, 240, 0.95);
         }
         .modal-close {
             position: absolute;
-            top: 18px;
-            right: 18px;
-            z-index: 2;
-            font-size: 30px;
+            top: 12px;
+            right: 12px;
+            z-index: 3;
+            font-size: 28px;
             cursor: pointer;
-            background: white;
+            background: rgba(255,255,255,0.96);
             color: #0f172a;
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 999px;
             text-align: center;
-            line-height: 44px;
-            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.28);
+            line-height: 41px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.22);
+            border: 1px solid #dbe6f1;
         }
         iframe { width: 100%; height: 100%; border: none; background: white; }
+        #pdfFrame { display: block; }
+        .close-panel-btn { display: none !important; }
         
         .btn-pdf { background: #e76f51; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
         .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
@@ -491,7 +495,7 @@
         </div>
 
         <div id="detailPanel" class="detail-panel" style="display: none;">
-            <div class="panel-header"><h3 id="panelTitle">Детализация</h3><button class="close-panel-btn" id="closePanelBtn">×</button></div>
+            <div class="panel-header"><h3 id="panelTitle">Детализация</h3><button class="close-panel-btn" id="closePanelBtn" type="button" aria-hidden="true" tabindex="-1">×</button></div>
             <div class="panel-content" id="panelContent"></div>
         </div>
     </div>
@@ -695,6 +699,12 @@
         return !!date && date <= todayStart();
     }
 
+    function drivePdfViewerUrl(fileId) {
+        if (!fileId) return '';
+        const rawPdf = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(fileId)}`;
+        return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(rawPdf)}`;
+    }
+
     function fixPdfLink(link) {
         if (!link) return "";
         const raw = link.toString().replace(/\u00a0/g, ' ').replace(/[\r\n\t]+/g, ' ').trim();
@@ -703,15 +713,17 @@
         if (!clean) return "";
 
         let fileMatch = clean.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
-        if (fileMatch) return `https://drive.google.com/file/d/${fileMatch[1]}/preview?rm=minimal`;
+        if (fileMatch) return drivePdfViewerUrl(fileMatch[1]);
 
         let openMatch = clean.match(/drive\.google\.com\/(?:open|uc)\?[^#]*id=([^&#]+)/i);
-        if (openMatch) return `https://drive.google.com/file/d/${openMatch[1]}/preview?rm=minimal`;
+        if (openMatch) return drivePdfViewerUrl(openMatch[1]);
 
         let presentationMatch = clean.match(/docs\.google\.com\/presentation\/d\/([^/]+)/i);
         if (presentationMatch) return `https://docs.google.com/presentation/d/${presentationMatch[1]}/embed?start=false&loop=false&delayms=3000`;
 
         if (clean.includes("drive.google.com")) {
+            const anyId = clean.match(/[-\w]{25,}/);
+            if (anyId) return drivePdfViewerUrl(anyId[0]);
             if (clean.includes("/view")) return clean.replace("/view", "/preview?rm=minimal");
             if (clean.includes("/edit")) return clean.replace("/edit", "/preview?rm=minimal");
         }
@@ -721,7 +733,7 @@
     function presentationViewerUrl(url) {
         const safeUrl = fixPdfLink(url);
         if (!safeUrl) return '';
-        if (safeUrl.includes('docs.google.com/presentation/') || safeUrl.includes('drive.google.com/file/')) return safeUrl;
+        if (safeUrl.includes('docs.google.com/presentation/') || safeUrl.includes('docs.google.com/gview')) return safeUrl;
         if (safeUrl.includes('#')) return safeUrl;
         return safeUrl + '#zoom=page-width&toolbar=0&navpanes=0';
     }
@@ -1446,7 +1458,8 @@
         $('overlay').classList.remove('active');
     }
 
-    $('closePanelBtn').addEventListener('click', () => { $('detailPanel').style.display = 'none'; });
+    const closePanelBtn = $('closePanelBtn');
+    if (closePanelBtn) closePanelBtn.addEventListener('click', (e) => { e.preventDefault(); });
     $('modalClose').addEventListener('click', () => { $('pdfModal').style.display = 'none'; $('pdfFrame').src = ''; });
     $('sidePanelClose').addEventListener('click', closeSidePanel);
     $('overlay').addEventListener('click', closeSidePanel);
