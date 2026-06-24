@@ -1110,19 +1110,26 @@
         return `${match[3]}.${match[2]}.${match[1]}`;
     }
 
-    function getFilteredDetailItems() {
-        return currentDetailBaseItems.filter(obj => {
-            if (tableFilters.district && normalizeText(obj.city, 'Не указан') !== tableFilters.district) return false;
-            if (tableFilters.developer && normalizeText(obj.developer, 'Не указан') !== tableFilters.developer) return false;
-            if (tableFilters.name && normalizeText(obj.name, 'Без наименования') !== tableFilters.name) return false;
-            if (tableFilters.date && dateKeyFromValue(obj.reviewDateRaw) !== tableFilters.date) return false;
-            return true;
-        });
+    function matchesDetailFilters(obj, exceptField = '') {
+        if (exceptField !== 'district' && tableFilters.district && normalizeText(obj.city, 'Не указан') !== tableFilters.district) return false;
+        if (exceptField !== 'developer' && tableFilters.developer && normalizeText(obj.developer, 'Не указан') !== tableFilters.developer) return false;
+        if (exceptField !== 'name' && tableFilters.name && normalizeText(obj.name, 'Без наименования') !== tableFilters.name) return false;
+        if (exceptField !== 'date' && tableFilters.date && dateKeyFromValue(obj.reviewDateRaw) !== tableFilters.date) return false;
+        return true;
     }
 
-    function optionCounts(field, items) {
+    function detailItemsFilteredExcept(exceptField = '') {
+        return currentDetailBaseItems.filter(obj => matchesDetailFilters(obj, exceptField));
+    }
+
+    function getFilteredDetailItems() {
+        return detailItemsFilteredExcept('');
+    }
+
+    function optionCounts(field) {
         const map = new Map();
-        items.forEach(obj => {
+        const sourceItems = detailItemsFilteredExcept(field);
+        sourceItems.forEach(obj => {
             let value = '';
             if (field === 'district') value = normalizeText(obj.city, 'Не указан');
             if (field === 'developer') value = normalizeText(obj.developer, 'Не указан');
@@ -1143,9 +1150,10 @@
 
     function selectFilterHtml(field, label) {
         const value = tableFilters[field];
-        const options = optionCounts(field, currentDetailBaseItems);
+        const sourceItems = detailItemsFilteredExcept(field);
+        const options = optionCounts(field);
         const optionsHtml = [
-            `<button class="filter-option ${value ? '' : 'selected'}" data-filter-option="${field}" data-value=""><span>Все</span><span class="count">${currentDetailBaseItems.length}</span></button>`,
+            `<button class="filter-option ${value ? '' : 'selected'}" data-filter-option="${field}" data-value=""><span>Все</span><span class="count">${sourceItems.length}</span></button>`,
             ...options.map(([option, count]) => `<button class="filter-option ${option === value ? 'selected' : ''}" data-filter-option="${field}" data-value="${encodeURIComponent(option)}"><span>${escapeHtml(option)}</span><span class="count">${count}</span></button>`)
         ].join('');
         return `<div class="filter-wrap">
@@ -1159,7 +1167,7 @@
 
     function availableDateKeys() {
         const set = new Set();
-        currentDetailBaseItems.forEach(obj => {
+        detailItemsFilteredExcept('date').forEach(obj => {
             const key = dateKeyFromValue(obj.reviewDateRaw);
             if (key) set.add(key);
         });
