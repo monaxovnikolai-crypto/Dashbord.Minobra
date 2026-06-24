@@ -192,35 +192,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.38);
+            background: rgba(15, 23, 42, 0.20);
             z-index: 1100;
             justify-content: center;
             align-items: center;
-            padding: 12px;
+            padding: 0;
         }
         .modal-content {
-            background: white;
-            border-radius: 14px;
-            width: min(98vw, 1800px);
-            height: 96vh;
+            background: #0f172a;
+            border-radius: 0;
+            width: 100vw;
+            height: 100vh;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.28);
+            box-shadow: none;
         }
         .modal-close {
             position: absolute;
-            top: 12px;
-            right: 14px;
+            top: 18px;
+            right: 18px;
             z-index: 2;
             font-size: 30px;
             cursor: pointer;
             background: white;
-            width: 42px;
-            height: 42px;
-            border-radius: 40px;
+            color: #0f172a;
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
             text-align: center;
-            line-height: 38px;
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+            line-height: 44px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.28);
         }
         iframe { width: 100%; height: 100%; border: none; background: white; }
         
@@ -702,21 +703,28 @@
         if (!clean) return "";
 
         let fileMatch = clean.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
-        if (fileMatch) return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+        if (fileMatch) return `https://drive.google.com/file/d/${fileMatch[1]}/preview?rm=minimal`;
 
         let openMatch = clean.match(/drive\.google\.com\/(?:open|uc)\?[^#]*id=([^&#]+)/i);
-        if (openMatch) return `https://drive.google.com/file/d/${openMatch[1]}/preview`;
+        if (openMatch) return `https://drive.google.com/file/d/${openMatch[1]}/preview?rm=minimal`;
 
         let presentationMatch = clean.match(/docs\.google\.com\/presentation\/d\/([^/]+)/i);
         if (presentationMatch) return `https://docs.google.com/presentation/d/${presentationMatch[1]}/embed?start=false&loop=false&delayms=3000`;
 
         if (clean.includes("drive.google.com")) {
-            if (clean.includes("/view")) return clean.replace("/view", "/preview");
-            if (clean.includes("/edit")) return clean.replace("/edit", "/preview");
+            if (clean.includes("/view")) return clean.replace("/view", "/preview?rm=minimal");
+            if (clean.includes("/edit")) return clean.replace("/edit", "/preview?rm=minimal");
         }
         return clean;
     }
 
+    function presentationViewerUrl(url) {
+        const safeUrl = fixPdfLink(url);
+        if (!safeUrl) return '';
+        if (safeUrl.includes('docs.google.com/presentation/') || safeUrl.includes('drive.google.com/file/')) return safeUrl;
+        if (safeUrl.includes('#')) return safeUrl;
+        return safeUrl + '#zoom=page-width&toolbar=0&navpanes=0';
+    }
     function reviewDateDisplay(obj) {
         const raw = cleanOpenDate(obj && obj.reviewDateRaw ? obj.reviewDateRaw : '');
         return raw || 'Не рассмотрено';
@@ -953,7 +961,7 @@
                 let title = 'Все проекты';
                 if (filter === 'reviewed') { filtered = allObjects.filter(o => isReviewed(o)); title = 'Рассмотрены'; }
                 if (filter === 'not-reviewed') { filtered = allObjects.filter(o => !isReviewed(o)); title = 'Не рассмотрены'; }
-                showDetailPanel(filtered, title);
+                showDetailPanel(filtered, title, false);
             });
         });
     }
@@ -1050,7 +1058,7 @@
                 tableFilters = { district: '', developer: '', name: '', date: '' };
                 activeFilter = { kind: 'district', key };
                 applyCrossHighlight('district', key);
-                showDetailPanel(allObjects.filter(o => normalizeText(o.city, 'Не указан') === key), `Городской округ: ${key}`);
+                showDetailPanel(allObjects.filter(o => normalizeText(o.city, 'Не указан') === key), `Городской округ: ${key}`, false);
             });
         });
 
@@ -1069,7 +1077,7 @@
                 tableFilters = { district: '', developer: '', name: '', date: '' };
                 activeFilter = { kind: 'developer', key };
                 applyCrossHighlight('developer', key);
-                showDetailPanel(allObjects.filter(o => normalizeText(o.developer, 'Не указан') === key), `Застройщик: ${key}`);
+                showDetailPanel(allObjects.filter(o => normalizeText(o.developer, 'Не указан') === key), `Застройщик: ${key}`, false);
             });
         });
     }
@@ -1360,7 +1368,7 @@
     }
 
     function openPdf(url) {
-        const safeUrl = fixPdfLink(url);
+        const safeUrl = presentationViewerUrl(url);
         if (!safeUrl) return;
         $('pdfFrame').src = safeUrl;
         $('pdfModal').style.display = 'flex';
