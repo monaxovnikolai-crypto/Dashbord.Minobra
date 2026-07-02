@@ -241,14 +241,14 @@
         .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
 
         .project-table-wrapper { overflow-x: hidden; width: 100%; }
-        .project-table { width: 100%; min-width: 0; table-layout: fixed; font-size: 11.5px; }
-        .project-table th { white-space: normal; line-height: 1.12; padding: 10px 6px; }
-        .project-table td { vertical-align: top; padding: 10px 6px; overflow-wrap: anywhere; word-break: normal; }
+        .project-table { width: 100%; min-width: 0; table-layout: fixed; font-size: 11.2px; }
+        .project-table th { white-space: normal; line-height: 1.12; padding: 9px 5px; }
+        .project-table td { vertical-align: top; padding: 9px 5px; overflow-wrap: anywhere; word-break: normal; }
         .project-index { font-weight: 800; color: #1e4663; text-align: center; }
         .project-name { font-weight: 700; color: #0f2b3d; line-height: 1.28; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .project-small { color: #64748b; font-size: 11px; line-height: 1.3; }
         .admin-short { line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-        .ing-task-short { color: #b91c1c; font-weight: 700; line-height: 1.3; white-space: pre-wrap; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .ing-task-short { color: #b91c1c; font-weight: 800; line-height: 1.32; white-space: pre-wrap; overflow: visible; }
         .ing-task-head { color: #b91c1c; }
         .ing-task-empty { color: #cbd5e1; font-weight: 600; }
         .date-cell .date-main, .date-cell .ing-date-line { white-space: pre-wrap; }
@@ -282,7 +282,7 @@
         .status-pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .status-pill.reviewed { background: #e8f5e9; color: #166534; border: 1px solid #b7e1c0; }
         .status-pill.not-reviewed { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
-        .btn-link { background: #e76f51; color: white; border: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .btn-link { background: #e76f51; color: white; border: none; padding: 7px 10px; border-radius: 999px; cursor: pointer; font-size: 11px; font-weight: 700; white-space: nowrap; }
         .btn-link:hover { filter: brightness(0.96); transform: translateY(-1px); }
         .btn-more { background: #2c7da0; color: white; border: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .btn-more.icon-more { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; line-height: 1; font-weight: 900; box-shadow: 0 4px 10px rgba(44,125,160,0.18); }
@@ -1541,7 +1541,7 @@
             </tr>`;
         }).join('');
 
-        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:3%"><col style="width:8%"><col style="width:10%"><col style="width:12%"><col style="width:9%"><col style="width:13%"><col style="width:20%"><col style="width:13%"><col style="width:6%"><col style="width:6%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th class="ing-task-head">Поручение ИНГ</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="10">Нет данных</td></tr>'}</tbody></table></div>`;
+        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:3%"><col style="width:7%"><col style="width:9%"><col style="width:11%"><col style="width:8%"><col style="width:10%"><col style="width:19%"><col style="width:24%"><col style="width:5%"><col style="width:4%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th class="ing-task-head">Поручение ИНГ</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="10">Нет данных</td></tr>'}</tbody></table></div>`;
         panel.style.display = 'block';
         if (shouldScroll) panel.scrollIntoView({ behavior: 'smooth' });
 
