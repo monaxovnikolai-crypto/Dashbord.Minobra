@@ -1544,15 +1544,18 @@
     }
 
     function decisionCellHtml(obj) {
-        const now = hasFilledValue(obj.decisionNow) ? obj.decisionNow : '';
-        const after = hasFilledValue(obj.afterRngp) ? obj.afterRngp : '';
-        if (!now && !after) return '—';
+        const parts = [
+            { label: 'Решение сейчас', value: obj.decisionNow },
+            { label: 'После внесения изменений в РНГП', value: obj.afterRngp },
+            { label: 'Решение Минздрава', value: obj.healthDecision }
+        ].filter(part => hasFilledValue(part.value));
 
-        return `<div class="decision-cell">
-            ${now ? `<div class="decision-part"><div class="decision-label">Решение сейчас</div><div class="decision-text">${escapeHtml(now)}</div></div>` : ''}
-            ${now && after ? '<div class="decision-divider"></div>' : ''}
-            ${after ? `<div class="decision-part"><div class="decision-label">После внесения изменений в РНГП</div><div class="decision-text">${escapeHtml(after)}</div></div>` : ''}
-        </div>`;
+        if (!parts.length) return '—';
+
+        return `<div class="decision-cell">${parts.map((part, idx) => `
+            ${idx > 0 ? '<div class="decision-divider"></div>' : ''}
+            <div class="decision-part"><div class="decision-label">${escapeHtml(part.label)}</div><div class="decision-text">${escapeHtml(part.value)}</div></div>
+        `).join('')}</div>`;
     }
 
     function sideInfoRow(label, value) {
