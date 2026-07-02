@@ -241,13 +241,17 @@
         .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
 
         .project-table-wrapper { overflow-x: hidden; width: 100%; }
-        .project-table { width: 100%; min-width: 0; table-layout: fixed; font-size: 12px; }
-        .project-table th { white-space: normal; line-height: 1.15; padding: 11px 8px; }
-        .project-table td { vertical-align: top; padding: 11px 8px; overflow-wrap: anywhere; word-break: normal; }
+        .project-table { width: 100%; min-width: 0; table-layout: fixed; font-size: 11.5px; }
+        .project-table th { white-space: normal; line-height: 1.12; padding: 10px 6px; }
+        .project-table td { vertical-align: top; padding: 10px 6px; overflow-wrap: anywhere; word-break: normal; }
         .project-index { font-weight: 800; color: #1e4663; text-align: center; }
         .project-name { font-weight: 700; color: #0f2b3d; line-height: 1.28; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .project-small { color: #64748b; font-size: 11px; line-height: 1.3; }
         .admin-short { line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .ing-task-short { color: #b91c1c; font-weight: 700; line-height: 1.3; white-space: pre-wrap; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .ing-task-head { color: #b91c1c; }
+        .ing-task-empty { color: #cbd5e1; font-weight: 600; }
+        .date-cell .date-main, .date-cell .ing-date-line { white-space: pre-wrap; }
         .date-cell { line-height: 1.25; }
         .date-main { font-weight: 800; color: #1e4663; white-space: nowrap; }
         .date-main.not-reviewed { color: #9a6400; font-weight: 800; white-space: normal; }
@@ -578,9 +582,10 @@
         PDF: 15,               // P — ссылка на презентацию
         HEALTH_DECISION: 16,   // Q — решение Минздрава
         ING_DATE: 17,          // R — дата у ИНГ
-        ING_PROGRESS: 18,      // S — прогон у ИНГ
-        PPT_SCHOOL: 19,        // T — школы по ППТ
-        PPT_GARDEN: 20         // U — детские сады по ППТ
+        ING_PROGRESS: 18,      // S — прогон у ИНГ / служебный статус, если есть
+        ING_TASK: 19,          // T — поручение ИНГ
+        PPT_SCHOOL: 20,        // U — школы по ППТ
+        PPT_GARDEN: 21         // V — детские сады по ППТ
     };
 
     const DEFAULT_HEADERS = [
@@ -588,7 +593,7 @@
         'РНГП школы', 'По новому РНГП школы', 'РНГП детские сады', 'По новому РНГП детские сады',
         'Разница Школы', 'Разница Сады', 'Решение сейчас', 'После внесения изменений в РНГП',
         'Участники от Администрации', 'Позиция Администрации', 'Ссылка на презентацию',
-        'Решение Минздрава', 'Дата у ИНГ', 'Прогон у ИНГ', 'Школы по ППТ', 'Детские сады по ППТ'
+        'Решение Минздрава', 'Дата у ИНГ', 'Прогон у ИНГ', 'Поручение ИНГ', 'Школы по ППТ', 'Детские сады по ППТ'
     ];
 
     let DATA_COL = { ...COL };
@@ -638,6 +643,7 @@
             HEALTH_DECISION: findHeaderIndex(['Решение Минздрава', 'Минздрав решение', 'Решение МЗ', 'Минздрав'], COL.HEALTH_DECISION),
             ING_DATE: findHeaderIndex(['Дата у ИНГ', 'Дата ИНГ', 'ИНГ дата'], COL.ING_DATE),
             ING_PROGRESS: findHeaderIndex(['Прогон у ИНГ', 'Прогон ИНГ', 'Итог ИНГ', 'ИНГ итог'], COL.ING_PROGRESS),
+            ING_TASK: findHeaderIndex(['Поручение ИНГ', 'Поручение от ИНГ', 'Поручение ГИН', 'Поручение от ГИН'], COL.ING_TASK),
             PPT_SCHOOL: findHeaderIndex(['Школы по ППТ', 'школа по ППТ', 'ППТ школы'], COL.PPT_SCHOOL),
             PPT_GARDEN: findHeaderIndex(['Детские сады по ППТ', 'сады по ППТ', 'сад по ППТ', 'ППТ сады'], COL.PPT_GARDEN)
         };
@@ -856,7 +862,13 @@
         const reviewHtml = reviewRaw
             ? `<div class="date-main">${escapeHtml(reviewRaw)}</div>`
             : `<div class="date-main not-reviewed">Не рассмотрено</div>`;
-        const ingHtml = ingRaw ? `<div class="ing-date-line">ИНГ: ${escapeHtml(ingRaw)}</div>` : '';
+
+        let ingHtml = '';
+        if (ingRaw) {
+            const lines = ingRaw.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+            ingHtml = lines.map((line, idx) => `<div class="ing-date-line">${idx === 0 ? 'ИНГ: ' : ''}${escapeHtml(line)}</div>`).join('');
+        }
+
         return `<div class="date-cell">${reviewHtml}${ingHtml}</div>`;
     }
 
@@ -1038,6 +1050,7 @@
                     healthDecision: row[DATA_COL.HEALTH_DECISION] || '',
                     ingDate: row[DATA_COL.ING_DATE] || '',
                     ingProgress: row[DATA_COL.ING_PROGRESS] || '',
+                    ingTask: row[DATA_COL.ING_TASK] || '',
                     pptSchool: row[DATA_COL.PPT_SCHOOL] || '',
                     pptGarden: row[DATA_COL.PPT_GARDEN] || '',
                     pdfLink: fixPdfLink(row[DATA_COL.PDF] || ''),
@@ -1237,8 +1250,45 @@
     }
 
     function dateKeyFromValue(value) {
-        const date = parseReviewDate(value);
-        return date ? dateKeyFromDate(date) : '';
+        const keys = dateKeysFromValue(value);
+        return keys.length ? keys[0] : '';
+    }
+
+    function dateKeysFromValue(value) {
+        const raw = cleanOpenDate(value);
+        if (!raw) return [];
+        const keys = [];
+        const seen = new Set();
+
+        function addDate(year, month, day) {
+            const parsed = new Date(year, month - 1, day);
+            if (parsed.getFullYear() !== year || parsed.getMonth() !== month - 1 || parsed.getDate() !== day) return;
+            const key = dateKeyFromDate(parsed);
+            if (!seen.has(key)) {
+                seen.add(key);
+                keys.push(key);
+            }
+        }
+
+        let match;
+        const ruPattern = /(\d{1,2})[.\/\-](\d{1,2})[.\/\-](20\d{2})/g;
+        while ((match = ruPattern.exec(raw)) !== null) {
+            addDate(parseInt(match[3], 10), parseInt(match[2], 10), parseInt(match[1], 10));
+        }
+
+        const isoPattern = /(20\d{2})[.\/\-](\d{1,2})[.\/\-](\d{1,2})/g;
+        while ((match = isoPattern.exec(raw)) !== null) {
+            addDate(parseInt(match[1], 10), parseInt(match[2], 10), parseInt(match[3], 10));
+        }
+
+        return keys;
+    }
+
+    function objectDateKeys(obj) {
+        const set = new Set();
+        dateKeysFromValue(obj && obj.reviewDateRaw).forEach(key => set.add(key));
+        dateKeysFromValue(obj && obj.ingDate).forEach(key => set.add(key));
+        return Array.from(set);
     }
 
     function formatDateRuFromKey(key) {
@@ -1252,7 +1302,7 @@
         if (exceptField !== 'district' && tableFilters.district && normalizeText(obj.city, 'Не указан') !== tableFilters.district) return false;
         if (exceptField !== 'developer' && tableFilters.developer && normalizeText(obj.developer, 'Не указан') !== tableFilters.developer) return false;
         if (exceptField !== 'name' && tableFilters.name && normalizeText(obj.name, 'Без наименования') !== tableFilters.name) return false;
-        if (exceptField !== 'date' && tableFilters.date && dateKeyFromValue(obj.reviewDateRaw) !== tableFilters.date) return false;
+        if (exceptField !== 'date' && tableFilters.date && !objectDateKeys(obj).includes(tableFilters.date)) return false;
         return true;
     }
 
@@ -1306,8 +1356,7 @@
     function availableDateKeys() {
         const set = new Set();
         detailItemsFilteredExcept('date').forEach(obj => {
-            const key = dateKeyFromValue(obj.reviewDateRaw);
-            if (key) set.add(key);
+            objectDateKeys(obj).forEach(key => set.add(key));
         });
         return set;
     }
@@ -1356,7 +1405,7 @@
                 </div>
                 <div class="calendar-weekdays"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
                 <div class="calendar-grid">${cells.join('')}</div>
-                <div class="calendar-legend">Выделены даты, по которым есть данные в таблице.</div>
+                <div class="calendar-legend">Выделены даты прогона и даты ИНГ, по которым есть данные.</div>
                 <button class="calendar-clear" type="button" data-calendar-clear>Сбросить дату</button>
             </div>
         </div>`;
@@ -1486,12 +1535,13 @@
                 <td>${reviewDateCellHtml(obj)}</td>
                 <td><div class="admin-short">${escapeHtml(obj.adminPosition || '—')}</div></td>
                 <td>${decisionCellHtml(obj)}</td>
+                <td>${ingTaskCellHtml(obj)}</td>
                 <td>${hasPdf ? `<button class="btn-link" data-index="${sourceIndex}">Открыть</button>` : '—'}</td>
                 <td><button class="btn-more icon-more" data-index="${sourceIndex}" title="Подробнее" aria-label="Подробнее">›</button></td>
             </tr>`;
         }).join('');
 
-        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:4%"><col style="width:9%"><col style="width:12%"><col style="width:15%"><col style="width:10%"><col style="width:17%"><col style="width:22%"><col style="width:6%"><col style="width:5%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="9">Нет данных</td></tr>'}</tbody></table></div>`;
+        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:3%"><col style="width:8%"><col style="width:10%"><col style="width:12%"><col style="width:9%"><col style="width:13%"><col style="width:20%"><col style="width:13%"><col style="width:6%"><col style="width:6%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th class="ing-task-head">Поручение ИНГ</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="10">Нет данных</td></tr>'}</tbody></table></div>`;
         panel.style.display = 'block';
         if (shouldScroll) panel.scrollIntoView({ behavior: 'smooth' });
 
@@ -1554,13 +1604,36 @@
 
         return `<div class="decision-cell">${parts.map((part, idx) => `
             ${idx > 0 ? '<div class="decision-divider"></div>' : ''}
-            <div class="decision-part"><div class="decision-label">${escapeHtml(part.label)}</div><div class="decision-text">${escapeHtml(part.value)}</div></div>
+            <div class="decision-part"><div class="decision-label">${escapeHtml(part.label)}</div><div class="decision-text">${multilineHtml(part.value)}</div></div>
         `).join('')}</div>`;
+    }
+
+    function isOnlyDateLines(value) {
+        const raw = cleanOpenDate(value);
+        if (!raw) return false;
+        const parts = raw.split(/\r?\n|;|,/).map(part => part.trim()).filter(Boolean);
+        if (!parts.length) return false;
+        return parts.every(part => {
+            const compact = part.replace(/^ИНГ[:\s-]*/i, '').trim();
+            return /^(\d{1,2})[.\/\-](\d{1,2})[.\/\-](20\d{2})$/.test(compact) || /^(20\d{2})[.\/\-](\d{1,2})[.\/\-](\d{1,2})$/.test(compact);
+        });
+    }
+
+    function multilineHtml(value) {
+        return escapeHtml(value).replace(/\r?\n/g, '<br>');
+    }
+
+    function ingTaskCellHtml(obj) {
+        const taskValue = valueByColumn(obj, 'ING_TASK', obj && obj.ingTask ? obj.ingTask : '');
+        // В нижней таблице «Поручение ИНГ» показывает только поручение из столбца T.
+        // Даты ИНГ остаются только под датой прогона, чтобы не было дубля.
+        if (!hasFilledValue(taskValue) || isOnlyDateLines(taskValue)) return '<span class="ing-task-empty">—</span>';
+        return `<div class="ing-task-short">${multilineHtml(taskValue)}</div>`;
     }
 
     function sideInfoRow(label, value) {
         if (!hasFilledValue(value)) return '';
-        return `<div class="side-info-row"><div class="side-info-label">${escapeHtml(label)}</div><div class="side-info-value">${escapeHtml(value)}</div></div>`;
+        return `<div class="side-info-row"><div class="side-info-label">${escapeHtml(label)}</div><div class="side-info-value">${multilineHtml(value)}</div></div>`;
     }
 
 
@@ -1615,7 +1688,7 @@
             sideInfoRow('После внесения изменений в РНГП', valueByColumn(obj, 'AFTER_RNGP', obj.afterRngp)),
             sideInfoRow('Решение Минздрава', valueByColumn(obj, 'HEALTH_DECISION', obj.healthDecision)),
             sideInfoRow('Дата у ИНГ', valueByColumn(obj, 'ING_DATE', obj.ingDate)),
-            sideInfoRow('Прогон у ИНГ', valueByColumn(obj, 'ING_PROGRESS', obj.ingProgress)),
+            sideInfoRow('Поручение ИНГ', isOnlyDateLines(valueByColumn(obj, 'ING_TASK', obj.ingTask)) ? '' : valueByColumn(obj, 'ING_TASK', obj.ingTask)),
             sidePresentationRow(obj)
         ]);
 
