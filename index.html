@@ -240,19 +240,44 @@
         .btn-pdf { background: #e76f51; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
         .btn-detail { background: #2c7da0; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
 
-        .project-table-wrapper { overflow-x: auto; }
-        .project-table { min-width: 980px; }
-        .project-table th { white-space: nowrap; }
-        .project-table td { vertical-align: top; }
+        .project-table-wrapper { overflow-x: hidden; width: 100%; }
+        .project-table { width: 100%; min-width: 0; table-layout: fixed; font-size: 12px; }
+        .project-table th { white-space: normal; line-height: 1.15; padding: 11px 8px; }
+        .project-table td { vertical-align: top; padding: 11px 8px; overflow-wrap: anywhere; word-break: normal; }
         .project-index { font-weight: 800; color: #1e4663; text-align: center; }
-        .project-name { font-weight: 700; color: #0f2b3d; line-height: 1.35; }
-        .project-small { color: #64748b; font-size: 12px; line-height: 1.35; }
+        .project-name { font-weight: 700; color: #0f2b3d; line-height: 1.28; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .project-small { color: #64748b; font-size: 11px; line-height: 1.3; }
+        .admin-short { line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .decision-cell { line-height: 1.3; }
+        .decision-part { padding: 2px 0; }
+        .decision-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b; font-weight: 800; margin-bottom: 4px; }
+        .decision-text { color: #1e293b; font-weight: 500; }
+        .decision-divider { height: 1px; background: #dbe5ef; margin: 10px 0; }
+        .side-section-title { font-size: 13px; font-weight: 900; color: #1e4663; text-transform: uppercase; letter-spacing: 0.06em; margin: 18px 0 10px; }
+        .side-info-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; margin-bottom: 14px; }
+        .side-info-row { display: grid; grid-template-columns: 160px 1fr; gap: 12px; padding: 11px 14px; border-bottom: 1px solid #edf2f7; font-size: 13px; line-height: 1.42; }
+        .side-info-row:last-child { border-bottom: none; }
+        .side-info-label { color: #64748b; font-weight: 800; }
+        .side-info-value { color: #1e293b; font-weight: 500; }
+        .admin-short, .decision-text, .side-info-value { white-space: pre-wrap; }
+        .side-info-value { overflow-wrap: anywhere; }
+
+        .calc-box { border: 1px solid #dbe5ef; border-radius: 18px; overflow: hidden; margin-bottom: 12px; background: #ffffff; }
+        .calc-title { background: #f8fafc; padding: 10px 14px; font-weight: 900; color: #1e4663; border-bottom: 1px solid #e2e8f0; }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+        .calc-item { padding: 12px 14px; border-right: 1px solid #e2e8f0; min-width: 0; }
+        .calc-item:last-child { border-right: none; }
+        .calc-label { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 900; letter-spacing: 0.035em; margin-bottom: 5px; }
+        .calc-value { font-size: 20px; font-weight: 900; color: #1e4663; overflow-wrap: anywhere; }
+        .calc-value.negative { color: #0f766e; }
+        .calc-value.positive { color: #b45309; }
         .status-pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .status-pill.reviewed { background: #e8f5e9; color: #166534; border: 1px solid #b7e1c0; }
         .status-pill.not-reviewed { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
         .btn-link { background: #e76f51; color: white; border: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .btn-link:hover { filter: brightness(0.96); transform: translateY(-1px); }
         .btn-more { background: #2c7da0; color: white; border: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .btn-more.icon-more { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; line-height: 1; font-weight: 900; box-shadow: 0 4px 10px rgba(44,125,160,0.18); }
         .btn-more:hover { filter: brightness(0.96); transform: translateY(-1px); }
         .project-meta { display: grid; grid-template-columns: 1fr; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 14px; margin-bottom: 18px; }
         .project-meta-title { font-weight: 800; color: #0f2b3d; line-height: 1.35; }
@@ -529,6 +554,7 @@
 
     const COL = {
         // Нумерация с нуля: A=0, B=1, C=2, D=3, E=4.
+        // Базовый порядок обновлен под новую структуру таблицы.
         NUMBER: 0,             // A — № из таблицы
         DISTRICT: 1,           // B — г.о.
         NAME: 2,               // C — застройка / проект
@@ -540,18 +566,89 @@
         NEW_RNGP_GARDEN: 8,    // I — по новому РНГП детские сады
         DIFF_SCHOOL: 9,        // J — разница школы
         DIFF_GARDEN: 10,       // K — разница сады
-        DECISION: 11,          // L — решение
-        PARTICIPANTS: 12,      // M — участники от администрации
-        ADMIN_POSITION: 13,    // N — позиция администрации
-        PDF: 14                // O — ссылка на презентацию
+        DECISION: -1,          // отдельное общее решение сейчас не обязательно используется
+        DECISION_NOW: 11,      // L — решение сейчас
+        AFTER_RNGP: 12,        // M — после внесения изменений в РНГП
+        PARTICIPANTS: 13,      // N — участники от администрации
+        ADMIN_POSITION: 14,    // O — позиция администрации
+        PDF: 15,               // P — ссылка на презентацию
+        HEALTH_DECISION: 16,   // Q — решение Минздрава
+        ING_DATE: 17,          // R — дата у ИНГ
+        ING_PROGRESS: 18,      // S — прогон у ИНГ
+        PPT_SCHOOL: 19,        // T — школы по ППТ
+        PPT_GARDEN: 20         // U — детские сады по ППТ
     };
 
     const DEFAULT_HEADERS = [
         '№', 'г.о.', 'Застройка', 'Застройщик', 'Дата прогона',
         'РНГП школы', 'По новому РНГП школы', 'РНГП детские сады', 'По новому РНГП детские сады',
-        'Разница Школы', 'Разница Сады', 'Решение', 'Участники от Администрации',
-        'Позиция Администрации', 'Ссылка на презентацию'
+        'Разница Школы', 'Разница Сады', 'Решение сейчас', 'После внесения изменений в РНГП',
+        'Участники от Администрации', 'Позиция Администрации', 'Ссылка на презентацию',
+        'Решение Минздрава', 'Дата у ИНГ', 'Прогон у ИНГ', 'Школы по ППТ', 'Детские сады по ППТ'
     ];
+
+    let DATA_COL = { ...COL };
+
+    function normalizeHeaderName(value) {
+        return normalizeText(value, '').toLowerCase()
+            .replace(/ё/g, 'е')
+            .replace(/[\s\n\r\t.]+/g, ' ')
+            .replace(/[«»"']/g, '')
+            .trim();
+    }
+
+    function findHeaderIndex(variants, fallbackIndex) {
+        const normalized = tableHeaders.map(normalizeHeaderName);
+        const variantList = variants.map(normalizeHeaderName);
+
+        for (const variant of variantList) {
+            const exact = normalized.findIndex(h => h === variant);
+            if (exact >= 0) return exact;
+        }
+        for (const variant of variantList) {
+            const contains = normalized.findIndex(h => h.includes(variant) || variant.includes(h));
+            if (contains >= 0) return contains;
+        }
+        return fallbackIndex;
+    }
+
+    function resolveDataColumns() {
+        const resolved = {
+            ...COL,
+            NUMBER: findHeaderIndex(['№', 'номер', 'п/п'], COL.NUMBER),
+            DISTRICT: findHeaderIndex(['г.о.', 'го', 'городской округ', 'округ'], COL.DISTRICT),
+            NAME: findHeaderIndex(['застройка', 'жк', 'проект', 'наименование застройки'], COL.NAME),
+            DEVELOPER: findHeaderIndex(['застройщик'], COL.DEVELOPER),
+            REVIEW_DATE: findHeaderIndex(['дата прогона', 'дата рассмотрения'], COL.REVIEW_DATE),
+            CAPACITY: findHeaderIndex(['РНГП школы', 'данные РНГП школы', 'РНГП школа'], COL.CAPACITY),
+            NEW_RNGP_SCHOOL: findHeaderIndex(['По новому РНГП школы', 'новое РНГП школы', 'по новому РНГП школа'], COL.NEW_RNGP_SCHOOL),
+            RNGP_GARDEN: findHeaderIndex(['РНГП детские сады', 'данные РНГП детские сады', 'РНГП сады', 'РНГП сад'], COL.RNGP_GARDEN),
+            NEW_RNGP_GARDEN: findHeaderIndex(['По новому РНГП детские сады', 'новое РНГП детские сады', 'по новому РНГП сады', 'по новому РНГП сад'], COL.NEW_RNGP_GARDEN),
+            DIFF_SCHOOL: findHeaderIndex(['Разница Школы', 'Разница школы'], COL.DIFF_SCHOOL),
+            DIFF_GARDEN: findHeaderIndex(['Разница Сады', 'Разница сады'], COL.DIFF_GARDEN),
+            DECISION_NOW: findHeaderIndex(['Решение сейчас', 'сейчас'], COL.DECISION_NOW),
+            AFTER_RNGP: findHeaderIndex(['После внесения изменений в РНГП', 'После изменений РНГП', 'после РНГП', 'после внесения изменений'], COL.AFTER_RNGP),
+            PARTICIPANTS: findHeaderIndex(['Участники от Администрации', 'Участники Администрации', 'участники от админ', 'участники'], COL.PARTICIPANTS),
+            ADMIN_POSITION: findHeaderIndex(['Позиция Администрации', 'Позиция Админ', 'Позиция Админ.', 'позиция администрации'], COL.ADMIN_POSITION),
+            PDF: findHeaderIndex(['Ссылка на презентацию', 'Презентация', 'ссылка'], COL.PDF),
+            HEALTH_DECISION: findHeaderIndex(['Решение Минздрава', 'Минздрав решение', 'Решение МЗ', 'Минздрав'], COL.HEALTH_DECISION),
+            ING_DATE: findHeaderIndex(['Дата у ИНГ', 'Дата ИНГ', 'ИНГ дата'], COL.ING_DATE),
+            ING_PROGRESS: findHeaderIndex(['Прогон у ИНГ', 'Прогон ИНГ', 'Итог ИНГ', 'ИНГ итог'], COL.ING_PROGRESS),
+            PPT_SCHOOL: findHeaderIndex(['Школы по ППТ', 'школа по ППТ', 'ППТ школы'], COL.PPT_SCHOOL),
+            PPT_GARDEN: findHeaderIndex(['Детские сады по ППТ', 'сады по ППТ', 'сад по ППТ', 'ППТ сады'], COL.PPT_GARDEN)
+        };
+
+        // Если отдельного общего столбца «Решение» больше нет, не даем ему случайно
+        // подхватить «Решение сейчас» или «Решение Минздрава» через частичное совпадение.
+        const decisionIndex = findHeaderIndex(['Решение'], COL.DECISION);
+        if (decisionIndex >= 0 && decisionIndex !== resolved.DECISION_NOW && decisionIndex !== resolved.AFTER_RNGP && decisionIndex !== resolved.HEALTH_DECISION) {
+            resolved.DECISION = decisionIndex;
+        } else {
+            resolved.DECISION = -1;
+        }
+
+        return resolved;
+    }
 
     let allObjects = [];
     let tableHeaders = DEFAULT_HEADERS.slice();
@@ -687,7 +784,7 @@
 
         // В Google Sheets эти две колонки иногда отдаются как даты начала XX века,
         // хотя фактически это числовые значения. Переводим дату обратно в число.
-        if (index === COL.NEW_RNGP_GARDEN || index === COL.DIFF_GARDEN) {
+        if (index === DATA_COL.NEW_RNGP_GARDEN || index === DATA_COL.DIFF_GARDEN) {
             const serial = googleDateSerialFromDisplayedDate(raw);
             if (serial !== null && /^\d{1,2}[.\/\-]\d{1,2}[.\/\-](?:19|20)\d{2}$/.test(raw)) {
                 return serial.toLocaleString('ru-RU');
@@ -805,8 +902,8 @@
     function isHeaderOrEmpty(row, rowIndex) {
         if (!row || !row.some(cell => normalizeText(cell, "") !== "")) return true;
         if (rowIndex === 0) return true;
-        const b = normalizeText(row[COL.DISTRICT], "").toLowerCase();
-        const c = normalizeText(row[COL.DEVELOPER], "").toLowerCase();
+        const b = normalizeText(row[DATA_COL.DISTRICT], "").toLowerCase();
+        const c = normalizeText(row[DATA_COL.DEVELOPER], "").toLowerCase();
         return ((b === 'городской округ' || b === 'городской округ (г.о.)' || b === 'округ') && (rowIndex <= 2)) || ((c === 'застройщик' || c === 'застройщики') && (rowIndex <= 2));
     }
 
@@ -899,14 +996,15 @@
             setLoadMessage('Загружаю данные из Google Sheets...');
             const rows = await loadRows();
             tableHeaders = buildHeaders(rows[0] || []);
+            DATA_COL = resolveDataColumns();
 
             allObjects = [];
             rows.forEach((row, rowIndex) => {
                 if (isHeaderOrEmpty(row, rowIndex)) return;
 
-                const district = normalizeText(row[COL.DISTRICT], 'Не указан');
-                const developer = normalizeText(row[COL.DEVELOPER], 'Не указан');
-                const name = firstText([row[COL.NAME], row[2], row[0], developer], 'Без наименования');
+                const district = normalizeText(row[DATA_COL.DISTRICT], 'Не указан');
+                const developer = normalizeText(row[DATA_COL.DEVELOPER], 'Не указан');
+                const name = firstText([row[DATA_COL.NAME], row[2], row[0], developer], 'Без наименования');
                 const typeInfo = inferType(row, name);
 
                 allObjects.push({
@@ -916,14 +1014,21 @@
                     city: district,
                     developer: developer,
                     name: name,
-                    capacity: parseCapacity(row[COL.CAPACITY]),
-                    reviewDateRaw: row[COL.REVIEW_DATE] || '',
-                    adminPosition: row[COL.ADMIN_POSITION] || '',
-                    decision: row[COL.DECISION] || '',
-                    participants: row[COL.PARTICIPANTS] || '',
-                    pdfLink: fixPdfLink(row[COL.PDF] || ''),
+                    capacity: parseCapacity(row[DATA_COL.CAPACITY]),
+                    reviewDateRaw: row[DATA_COL.REVIEW_DATE] || '',
+                    adminPosition: row[DATA_COL.ADMIN_POSITION] || '',
+                    decision: row[DATA_COL.DECISION] || '',
+                    participants: row[DATA_COL.PARTICIPANTS] || '',
+                    decisionNow: row[DATA_COL.DECISION_NOW] || '',
+                    afterRngp: row[DATA_COL.AFTER_RNGP] || '',
+                    healthDecision: row[DATA_COL.HEALTH_DECISION] || '',
+                    ingDate: row[DATA_COL.ING_DATE] || '',
+                    ingProgress: row[DATA_COL.ING_PROGRESS] || '',
+                    pptSchool: row[DATA_COL.PPT_SCHOOL] || '',
+                    pptGarden: row[DATA_COL.PPT_GARDEN] || '',
+                    pdfLink: fixPdfLink(row[DATA_COL.PDF] || ''),
                     originalRow: row.slice(),
-                    sourceNumber: row[COL.NUMBER] || ''
+                    sourceNumber: row[DATA_COL.NUMBER] || ''
                 });
             });
 
@@ -1365,13 +1470,14 @@
                 <td>${escapeHtml(obj.developer || '—')}</td>
                 <td><div class="project-name">${escapeHtml(obj.name || '—')}</div></td>
                 <td>${escapeHtml(reviewDateDisplay(obj))}</td>
-                <td>${escapeHtml(obj.adminPosition || '—')}</td>
+                <td><div class="admin-short">${escapeHtml(obj.adminPosition || '—')}</div></td>
+                <td>${decisionCellHtml(obj)}</td>
                 <td>${hasPdf ? `<button class="btn-link" data-index="${sourceIndex}">Открыть</button>` : '—'}</td>
-                <td><button class="btn-more" data-index="${sourceIndex}">Подробнее</button></td>
+                <td><button class="btn-more icon-more" data-index="${sourceIndex}" title="Подробнее" aria-label="Подробнее">›</button></td>
             </tr>`;
         }).join('');
 
-        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Ссылка на презентацию</th><th>Дополнительно</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Нет данных</td></tr>'}</tbody></table></div>`;
+        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:4%"><col style="width:9%"><col style="width:12%"><col style="width:15%"><col style="width:9%"><col style="width:17%"><col style="width:23%"><col style="width:6%"><col style="width:5%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="9">Нет данных</td></tr>'}</tbody></table></div>`;
         panel.style.display = 'block';
         if (shouldScroll) panel.scrollIntoView({ behavior: 'smooth' });
 
@@ -1401,63 +1507,133 @@
         $('pdfModal').style.display = 'flex';
     }
 
-    function buildAllFieldsRows(obj) {
-        const originalRow = obj.originalRow || [];
-        const max = Math.max(tableHeaders.length, DEFAULT_HEADERS.length, originalRow.length);
-        const duplicateFields = new Set([
-            COL.NUMBER,
-            COL.DISTRICT,
-            COL.NAME,
-            COL.DEVELOPER,
-            COL.REVIEW_DATE,
-            COL.ADMIN_POSITION,
-            COL.PDF
-        ]);
-        let rows = '';
+    function fieldValue(obj, index) {
+        const row = obj.originalRow || [];
+        if (index === undefined || index === null || index < 0) return '';
+        return row[index] || '';
+    }
 
-        for (let i = 0; i < max; i++) {
-            if (duplicateFields.has(i)) continue;
+    function displayNumberField(index, value) {
+        const raw = cleanOpenDate(value).replace(/\s+/g, ' ').trim();
+        if (!raw) return '';
 
-            const label = getHeaderLabel(i);
-            const rawValue = originalRow[i];
-
-            if (!hasFilledValue(rawValue)) continue;
-
-            let displayValue = rawValue;
-            if (i === COL.NEW_RNGP_GARDEN || i === COL.DIFF_GARDEN) displayValue = numericGardenFieldDisplay(i, rawValue);
-
-            if (!hasFilledValue(displayValue)) continue;
-
-            rows += `<tr><td>${escapeHtml(label)}</td><td>${escapeHtml(displayValue)}</td></tr>`;
+        if (index === DATA_COL.NEW_RNGP_GARDEN || index === DATA_COL.DIFF_GARDEN) {
+            return numericGardenFieldDisplay(index, raw);
         }
-        return rows || '<tr><td colspan="2">Нет дополнительных заполненных данных</td></tr>';
+
+        const plainNumber = raw.replace(/\s/g, '').replace(',', '.');
+        if (/^-?\d+(\.\d+)?$/.test(plainNumber)) {
+            const num = Number(plainNumber);
+            if (Number.isFinite(num)) return num.toLocaleString('ru-RU');
+        }
+        return raw;
+    }
+
+    function decisionCellHtml(obj) {
+        const now = hasFilledValue(obj.decisionNow) ? obj.decisionNow : '';
+        const after = hasFilledValue(obj.afterRngp) ? obj.afterRngp : '';
+        if (!now && !after) return '—';
+
+        return `<div class="decision-cell">
+            ${now ? `<div class="decision-part"><div class="decision-label">Решение сейчас</div><div class="decision-text">${escapeHtml(now)}</div></div>` : ''}
+            ${now && after ? '<div class="decision-divider"></div>' : ''}
+            ${after ? `<div class="decision-part"><div class="decision-label">После внесения изменений в РНГП</div><div class="decision-text">${escapeHtml(after)}</div></div>` : ''}
+        </div>`;
+    }
+
+    function sideInfoRow(label, value) {
+        if (!hasFilledValue(value)) return '';
+        return `<div class="side-info-row"><div class="side-info-label">${escapeHtml(label)}</div><div class="side-info-value">${escapeHtml(value)}</div></div>`;
+    }
+
+
+    function valueByColumn(obj, key, fallbackValue = '') {
+        if (!obj) return fallbackValue;
+        const index = DATA_COL[key];
+        const direct = (index !== undefined && index !== null) ? fieldValue(obj, index) : '';
+        return hasFilledValue(direct) ? direct : fallbackValue;
+    }
+
+    function sectionCardHtml(rows) {
+        const html = rows.filter(Boolean).join('');
+        return html ? `<div class="side-info-card">${html}</div>` : '';
+    }
+
+    function sidePresentationRow(obj) {
+        if (!obj || !obj.pdfLink) return '';
+        return `<div class="side-info-row"><div class="side-info-label">Презентация</div><div class="side-info-value"><button class="btn-link" data-side-pdf="1">Открыть</button></div></div>`;
+    }
+
+    function calcBoxHtml(title, baseValue, newValue, diffValue, baseIndex, newIndex, diffIndex) {
+        const base = displayNumberField(baseIndex, baseValue);
+        const newer = displayNumberField(newIndex, newValue);
+        const diff = displayNumberField(diffIndex, diffValue);
+        if (!hasFilledValue(base) && !hasFilledValue(newer) && !hasFilledValue(diff)) return '';
+
+        const diffNum = Number(String(diff).replace(/\s/g, '').replace(',', '.').replace('−', '-'));
+        const diffClass = Number.isFinite(diffNum) ? (diffNum < 0 ? ' negative' : (diffNum > 0 ? ' positive' : '')) : '';
+
+        return `<div class="calc-box">
+            <div class="calc-title">${escapeHtml(title)}</div>
+            <div class="calc-grid">
+                <div class="calc-item"><div class="calc-label">Данные РНГП</div><div class="calc-value">${escapeHtml(base || '—')}</div></div>
+                <div class="calc-item"><div class="calc-label">Новое РНГП</div><div class="calc-value">${escapeHtml(newer || '—')}</div></div>
+                <div class="calc-item"><div class="calc-label">Разница</div><div class="calc-value${diffClass}">${escapeHtml(diff || '—')}</div></div>
+            </div>
+        </div>`;
     }
 
     function openSidePanel(obj) {
         const hasPdf = obj.pdfLink && obj.pdfLink !== '';
-        const statusClass = isReviewed(obj) ? 'reviewed' : 'not-reviewed';
-        const statusText = isReviewed(obj) ? 'Рассмотрено' : 'Не рассмотрено';
 
-        $('sidePanelTitle').innerHTML = `Все данные по проекту`;
+        const mainRows = sectionCardHtml([
+            sideInfoRow('№', valueByColumn(obj, 'NUMBER', obj.sourceNumber)),
+            sideInfoRow('г.о.', valueByColumn(obj, 'DISTRICT', obj.city)),
+            sideInfoRow('Застройщик', valueByColumn(obj, 'DEVELOPER', obj.developer)),
+            sideInfoRow('Застройка', valueByColumn(obj, 'NAME', obj.name)),
+            sideInfoRow('Дата прогона', reviewDateDisplay(obj)),
+            sideInfoRow('Участники от Администрации', valueByColumn(obj, 'PARTICIPANTS', obj.participants)),
+            sideInfoRow('Позиция Администрации', valueByColumn(obj, 'ADMIN_POSITION', obj.adminPosition)),
+            sideInfoRow('Решение сейчас', valueByColumn(obj, 'DECISION_NOW', obj.decisionNow)),
+            sideInfoRow('После внесения изменений в РНГП', valueByColumn(obj, 'AFTER_RNGP', obj.afterRngp)),
+            sideInfoRow('Решение Минздрава', valueByColumn(obj, 'HEALTH_DECISION', obj.healthDecision)),
+            sideInfoRow('Дата у ИНГ', valueByColumn(obj, 'ING_DATE', obj.ingDate)),
+            sideInfoRow('Прогон у ИНГ', valueByColumn(obj, 'ING_PROGRESS', obj.ingProgress)),
+            sidePresentationRow(obj)
+        ]);
+
+        const calcRows = [
+            calcBoxHtml('Школы', fieldValue(obj, DATA_COL.CAPACITY), fieldValue(obj, DATA_COL.NEW_RNGP_SCHOOL), fieldValue(obj, DATA_COL.DIFF_SCHOOL), DATA_COL.CAPACITY, DATA_COL.NEW_RNGP_SCHOOL, DATA_COL.DIFF_SCHOOL),
+            calcBoxHtml('Детские сады', fieldValue(obj, DATA_COL.RNGP_GARDEN), fieldValue(obj, DATA_COL.NEW_RNGP_GARDEN), fieldValue(obj, DATA_COL.DIFF_GARDEN), DATA_COL.RNGP_GARDEN, DATA_COL.NEW_RNGP_GARDEN, DATA_COL.DIFF_GARDEN)
+        ].filter(Boolean).join('');
+
+        const pptRows = sectionCardHtml([
+            sideInfoRow('Школы по ППТ', obj.pptSchool),
+            sideInfoRow('Детские сады по ППТ', obj.pptGarden)
+        ]);
+
+        $('sidePanelTitle').innerHTML = `Карточка проекта`;
         $('sidePanelContent').innerHTML = `
             <div class="project-meta">
                 <div class="project-meta-title">${escapeHtml(hasFilledValue(obj.name) ? obj.name : 'Проект')}</div>
                 ${metaLineHtml('г.о.', obj.city)}
                 ${metaLineHtml('Застройщик', obj.developer)}
-                ${metaLineHtml('Дата прогона', obj.reviewDateRaw ? reviewDateDisplay(obj) : '')}
-                ${metaLineHtml('Позиция администрации', obj.adminPosition)}
-                ${hasPdf ? `<div><button class="btn-link" id="sideTopPdfBtn">Открыть презентацию</button></div>` : ''}
             </div>
-            <div class="all-fields-title">Показатели</div>
-            <table class="detail-table">${buildAllFieldsRows(obj)}</table>
+            ${mainRows ? `<div class="side-section-title">Основное</div>${mainRows}` : ''}
+            ${calcRows ? `<div class="side-section-title">Расчет</div>${calcRows}` : ''}
+            ${pptRows ? `<div class="side-section-title">ППТ</div>${pptRows}` : ''}
+            ${(!mainRows && !calcRows && !pptRows) ? '<div class="project-small">Нет дополнительных заполненных данных.</div>' : ''}
         `;
         $('sidePanel').classList.add('open');
         $('overlay').classList.add('active');
 
-        const pdfBtn = $('sidePdfBtn');
-        const topPdfBtn = $('sideTopPdfBtn');
-        if (pdfBtn) pdfBtn.addEventListener('click', () => openPdf(obj.pdfLink));
-        if (topPdfBtn) topPdfBtn.addEventListener('click', () => openPdf(obj.pdfLink));
+        const sidePdfBtn = $('sidePanelContent').querySelector('[data-side-pdf]');
+        if (sidePdfBtn && hasPdf) {
+            sidePdfBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openPdf(obj.pdfLink);
+            });
+        }
     }
 
     function closeSidePanel() {
