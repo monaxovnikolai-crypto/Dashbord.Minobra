@@ -248,6 +248,10 @@
         .project-name { font-weight: 700; color: #0f2b3d; line-height: 1.28; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .project-small { color: #64748b; font-size: 11px; line-height: 1.3; }
         .admin-short { line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .date-cell { line-height: 1.25; }
+        .date-main { font-weight: 800; color: #1e4663; white-space: nowrap; }
+        .date-main.not-reviewed { color: #9a6400; font-weight: 800; white-space: normal; }
+        .ing-date-line { margin-top: 5px; font-size: 11px; color: #64748b; font-weight: 800; white-space: nowrap; }
         .decision-cell { line-height: 1.3; }
         .decision-part { padding: 2px 0; }
         .decision-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b; font-weight: 800; margin-bottom: 4px; }
@@ -844,6 +848,16 @@
     function reviewDateDisplay(obj) {
         const raw = cleanOpenDate(obj && obj.reviewDateRaw ? obj.reviewDateRaw : '');
         return raw || 'Не рассмотрено';
+    }
+
+    function reviewDateCellHtml(obj) {
+        const reviewRaw = cleanOpenDate(obj && obj.reviewDateRaw ? obj.reviewDateRaw : '');
+        const ingRaw = cleanOpenDate(valueByColumn(obj, 'ING_DATE', obj && obj.ingDate ? obj.ingDate : ''));
+        const reviewHtml = reviewRaw
+            ? `<div class="date-main">${escapeHtml(reviewRaw)}</div>`
+            : `<div class="date-main not-reviewed">Не рассмотрено</div>`;
+        const ingHtml = ingRaw ? `<div class="ing-date-line">ИНГ: ${escapeHtml(ingRaw)}</div>` : '';
+        return `<div class="date-cell">${reviewHtml}${ingHtml}</div>`;
     }
 
     function parseCsv(text) {
@@ -1469,7 +1483,7 @@
                 <td>${escapeHtml(obj.city || '—')}</td>
                 <td>${escapeHtml(obj.developer || '—')}</td>
                 <td><div class="project-name">${escapeHtml(obj.name || '—')}</div></td>
-                <td>${escapeHtml(reviewDateDisplay(obj))}</td>
+                <td>${reviewDateCellHtml(obj)}</td>
                 <td><div class="admin-short">${escapeHtml(obj.adminPosition || '—')}</div></td>
                 <td>${decisionCellHtml(obj)}</td>
                 <td>${hasPdf ? `<button class="btn-link" data-index="${sourceIndex}">Открыть</button>` : '—'}</td>
@@ -1477,7 +1491,7 @@
             </tr>`;
         }).join('');
 
-        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:4%"><col style="width:9%"><col style="width:12%"><col style="width:15%"><col style="width:9%"><col style="width:17%"><col style="width:23%"><col style="width:6%"><col style="width:5%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="9">Нет данных</td></tr>'}</tbody></table></div>`;
+        $('panelContent').innerHTML = `${filtersHtml()}<div class="detail-result-note">Показано: ${filteredItems.length} из ${currentDetailBaseItems.length}</div><div class="project-table-wrapper"><table class="project-table"><colgroup><col style="width:4%"><col style="width:9%"><col style="width:12%"><col style="width:15%"><col style="width:10%"><col style="width:17%"><col style="width:22%"><col style="width:6%"><col style="width:5%"></colgroup><thead><tr><th>№</th><th>г.о.</th><th>Застройщик</th><th>Застройка</th><th>Дата прогона</th><th>Позиция Админ.</th><th>Решение</th><th>Преза</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="9">Нет данных</td></tr>'}</tbody></table></div>`;
         panel.style.display = 'block';
         if (shouldScroll) panel.scrollIntoView({ behavior: 'smooth' });
 
